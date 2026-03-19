@@ -14,9 +14,8 @@ import java.time.LocalDate;
 public class UserAccount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // internal numeric ID
-    private Long id;
+    @Column(name = "account_id", length = 7)
+    private String accountId;
 
     @Column(length = 50, nullable = false)
     private String username;
@@ -57,8 +56,9 @@ public class UserAccount {
     @Column(name = "credit_limit", precision = 10, scale = 2)
     private BigDecimal creditLimit;
 
-    @Column(name = "discount_plan_id")
-    private Integer discountPlanId;
+    @ManyToOne(fetch = FetchType.LAZY) //Lazy loading avoids unnecessary database queries and reduces memory usage.
+    @JoinColumn(name = "discount_plan_id", nullable = true) // FK column
+    private DiscountPlan discountPlan;
 
     // balance: total 10 digits, 2 decimal places (e.g., 12345678.90); cannot be null, default 0.00
     @Column(precision = 10, scale = 2, nullable = false)

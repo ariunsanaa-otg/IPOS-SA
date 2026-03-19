@@ -15,17 +15,24 @@ public class Invoice {
 
     @Id
     @Column(name = "invoice_id", length = 10)
-    private String invoiceId; // e.g., "197362"
+    private String invoiceId; // Primary key: e.g., "197362"
 
-    @Column(name = "order_id", length = 10, nullable = false)
-    private String orderId; // FK to Order
+    // One Invoice corresponds to exactly one Order
+    // Each Order generates exactly one Invoice
+    @OneToOne(fetch = FetchType.LAZY) // Load the Order only when accessed
+    @JoinColumn(name = "order_id", nullable = false) // FK column, cannot be null
+    private Order order;
 
-    @Column(name = "account_id", length = 10, nullable = false)
-    private String accountId; // FK to UserAccount
+    // Many Invoices belong to one UserAccount
+    // Each invoice is associated with exactly one account
+    @ManyToOne(fetch = FetchType.LAZY) // Load the UserAccount only when accessed
+    @JoinColumn(name = "account_id", nullable = false) // FK column, cannot be null
+    private UserAccount account;
 
     @Column(name = "invoice_date", nullable = false)
-    private LocalDate invoiceDate; // date the invoice was raised
+    private LocalDate invoiceDate; // Date the invoice was raised
 
+    // Precision 10, scale 2: e.g., 12345678.90
     @Column(name = "amount_due", precision = 10, scale = 2, nullable = false)
-    private BigDecimal amountDue; // total amount for the invoice
+    private BigDecimal amountDue; // Total amount for the invoice
 }
