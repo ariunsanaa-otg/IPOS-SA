@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,9 +15,8 @@ import java.time.LocalDate;
 public class UserAccount {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // internal numeric ID
-    private Long id;
+    @Column(name = "account_id", length = 7)
+    private String accountId;
 
     @Column(length = 50, nullable = false)
     private String username;
@@ -57,8 +57,10 @@ public class UserAccount {
     @Column(name = "credit_limit", precision = 10, scale = 2)
     private BigDecimal creditLimit;
 
-    @Column(name = "discount_plan_id")
-    private Integer discountPlanId;
+    // Many UserAccounts can share the same DiscountPlan. Each account references exactly one plan.
+    @ManyToOne(fetch = FetchType.LAZY) //Lazy loading avoids unnecessary database queries and reduces memory usage.
+    @JoinColumn(name = "discount_plan_id", nullable = true) // FK column
+    private DiscountPlan discountPlan;
 
     // balance: total 10 digits, 2 decimal places (e.g., 12345678.90); cannot be null, default 0.00
     @Column(precision = 10, scale = 2, nullable = false)
@@ -66,6 +68,14 @@ public class UserAccount {
 
     @Column(name = "payment_due_date")
     private LocalDate paymentDueDate;
+
+    // One UserAccount can have many MonthlyDiscounts.
+    // 'mappedBy = "account"' means that the link (foreign key) is stored in MonthlyDiscount.
+    // This side just “looks at” the list of discounts, it doesn’t own the database column.
+    // Lazy loading: the discounts are only loaded from the database when you actually use this list.
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<MonthlyDiscount> monthlyDiscounts;
+
 
     // Enums for account_type and account_status
     public enum AccountType { MERCHANT, ADMIN, MANAGER }

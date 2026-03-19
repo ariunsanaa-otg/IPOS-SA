@@ -14,29 +14,32 @@ public class CatalogueItem {
 
     @Id
     @Column(name = "item_id", length = 15)
-    private String itemId; // e.g., "100 00001"
+    private String itemId; // Primary key: Appendix 1, e.g., "100 00001"
 
     @Column(length = 255, nullable = false)
-    private String description; // e.g., "Paracetamol"
+    private String description; // Item description, e.g., "Paracetamol"
 
-    @Column(name = "package_type", length = 50)
-    private String packageType; // e.g., "box", "bottle"
+    @Column(name = "package_type", length = 50, nullable = false)
+    private String packageType; // Package type, e.g., "box", "bottle"
 
-    @Column(length = 20)
-    private String unit; // e.g., "Caps", "ml"
+    @Column(length = 20, nullable = false)
+    private String unit; // Unit of measure, e.g., "Caps", "ml"
 
-    @Column(name = "units_in_pack")
-    private Integer unitsInPack; // e.g., 20, 30
+    @Column(name = "units_in_pack", nullable = false)
+    private Integer unitsInPack; // Number of units per pack
 
-    @Column(name = "package_cost", precision = 10, scale = 2)
-    private BigDecimal packageCost; // e.g., 0.10
+    // Precision 10, scale 2: e.g., 12345678.90
+    @Column(name = "package_cost", precision = 10, scale = 2, nullable = false)
+    private BigDecimal packageCost; // Cost per pack in £
 
-    @Column
-    private Integer availability; // packs available
+    @Column(nullable = false)
+    private Integer availability; // Packs available in stock
 
-    @Column(name = "min_stock_level")
-    private Integer minStockLevel; // stock limit
+    @Column(name = "min_stock_level", nullable = false)
+    private Integer minStockLevel; // Minimum stock limit (not shown to merchants)
 
+    // Precision 5, scale 2: e.g., 10.00 = 10%
     @Column(name = "reorder_buffer_pct", precision = 5, scale = 2, nullable = false)
-    private BigDecimal reorderBufferPct = BigDecimal.valueOf(10.00); // default 10%
+    private BigDecimal reorderBufferPct = BigDecimal.valueOf(10.00);
+    // Reorder buffer percentage, default 10%; can be adjusted per item (10–50%)
 }

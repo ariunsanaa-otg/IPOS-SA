@@ -15,17 +15,20 @@ public class StockDelivery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "delivery_id")
-    private Integer deliveryId;
+    private Integer deliveryId; // Primary key: auto-incremented
 
-    @Column(name = "item_id", length = 15, nullable = false)
-    private String itemId; // FK to CatalogueItem
+    // Many StockDeliveries belong to one CatalogueItem
+    // Each delivery is associated with exactly one catalogue item
+    @ManyToOne(fetch = FetchType.LAZY) // Load CatalogueItem only when accessed
+    @JoinColumn(name = "item_id", nullable = false) // FK column, cannot be null
+    private CatalogueItem item;
 
     @Column(name = "quantity_received", nullable = false)
-    private Integer quantityReceived; // amount of stock delivered
+    private Integer quantityReceived; // Amount of stock delivered
 
     @Column(name = "delivery_date", nullable = false)
-    private LocalDate deliveryDate;
+    private LocalDate deliveryDate; // Date stock was delivered
 
     @Column(name = "recorded_by", length = 100)
-    private String recordedBy; // admin who recorded the delivery
+    private String recordedBy; // Admin who recorded the delivery
 }
