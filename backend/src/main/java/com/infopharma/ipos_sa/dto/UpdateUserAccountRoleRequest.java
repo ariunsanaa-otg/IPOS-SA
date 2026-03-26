@@ -6,24 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CreateUserAccountRequest {
-
-    private String username;
-    private String password;
+public class UpdateUserAccountRoleRequest {
+    private Long accountId;
     private UserAccount.AccountType accountType;
-    private UserAccount.AccountStatus accountStatus;
-    private String contactName;
-    private String companyName;
-    private String address;
-    private String phone;
-    private String fax;
-    private String email;
+
 }

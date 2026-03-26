@@ -6,6 +6,8 @@ import com.infopharma.ipos_sa.repository.UserAccountRepository;
 import com.infopharma.ipos_sa.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -20,13 +22,20 @@ public class UserServiceImpl implements UserService {
         return userAccountRepository.save(account);
     }
 
-//    @Override
-//    public UserAccount assignRole(String userId, String role){
-//
-//    }
-//
-//    @Override
-//    public UserAccount updateRole(String userId, String role){
-//
-//    }
+    @Override
+    public UserAccount updateAccount(UserAccount account){
+        return userAccountRepository.save(account);
+    }
+
+    @Override
+    public void deleteAccount(Long id){
+        userAccountRepository.deleteById(String.valueOf(id));
+    }
+
+    @Override
+    public Optional<UserAccount> findOne(Long id){
+        return userAccountRepository.findById(String.valueOf(id));
+    }
+
+
 }

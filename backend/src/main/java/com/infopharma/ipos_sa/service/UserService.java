@@ -2,11 +2,13 @@ package com.infopharma.ipos_sa.service;
 
 import com.infopharma.ipos_sa.entity.UserAccount;
 
+import java.util.Optional;
+
 public interface UserService {
 
     UserAccount createAccount(UserAccount account);
+    UserAccount updateAccount(UserAccount account);
+    void deleteAccount(Long id);
 
-//    UserAccount assignRole(String userId, String role);
-//    UserAccount updateRole(String userId, String role);
-
+    Optional<UserAccount> findOne(Long id);
 }
