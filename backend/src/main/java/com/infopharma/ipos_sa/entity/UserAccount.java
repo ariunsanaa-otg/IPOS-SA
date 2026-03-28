@@ -5,6 +5,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -15,14 +16,15 @@ import java.util.List;
 public class UserAccount {
 
     @Id
-    @Column(name = "account_id", length = 7)
-    private String accountId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_id")
+    private Long accountId;
 
     @Column(length = 50, nullable = false)
     private String username;
 
-    @Column(name = "password_hash", length = 255, nullable = false)
-    private String passwordHash;
+    @Column(name = "password", length = 255, nullable = false)
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "account_type", nullable = false)
