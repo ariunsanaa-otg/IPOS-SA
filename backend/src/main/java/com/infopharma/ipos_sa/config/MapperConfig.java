@@ -10,6 +10,10 @@ public class MapperConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)  // only map exact field name matches
+                .setSkipNullEnabled(true);                        // skip null source fields (safe partial updates)
+        return modelMapper;
     }
 }
