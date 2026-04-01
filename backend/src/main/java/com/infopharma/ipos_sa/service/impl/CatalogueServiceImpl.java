@@ -38,6 +38,14 @@ public class CatalogueServiceImpl implements CatalogueService {
 
     @Override
     public CatalogueItem addItem(CatalogueItem item) {
+        if (item.getItemId() == null || item.getItemId().isBlank()) {
+            // Auto-generate a unique 6-digit numeric ID
+            String id;
+            do {
+                id = String.format("%06d", (int)(Math.random() * 900000) + 100000);
+            } while (catalogueItemRepository.existsById(id));
+            item.setItemId(id);
+        }
         return catalogueItemRepository.save(item);
     }
 
@@ -70,7 +78,7 @@ public class CatalogueServiceImpl implements CatalogueService {
 
     @Override
     public List<CatalogueItem> search(String keyword) {
-        return catalogueItemRepository.findByDescriptionContainingIgnoreCase(keyword);
+        return catalogueItemRepository.findByItemIdContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
     }
 
     @Override

@@ -5,11 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableScheduling
+@EnableScheduling  // Required for AccountScheduler nightly status updates
 public class IposSaApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(IposSaApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(IposSaApplication.class, args);
+    }
 }

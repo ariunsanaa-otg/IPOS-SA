@@ -1,45 +1,48 @@
 package com.infopharma.ipos_sa.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "catalogue_items")
+@ToString
+@EqualsAndHashCode(of = "itemId")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CatalogueItem {
 
     @Id
     @Column(name = "item_id", length = 15)
-    private String itemId; // Primary key: Appendix 1, e.g., "100 00001"
+    private String itemId;
 
     @Column(length = 255, nullable = false)
-    private String description; // Item description, e.g., "Paracetamol"
+    private String description;
 
     @Column(name = "package_type", length = 50, nullable = false)
-    private String packageType; // Package type, e.g., "box", "bottle"
+    private String packageType;
 
     @Column(length = 20, nullable = false)
-    private String unit; // Unit of measure, e.g., "Caps", "ml"
+    private String unit;
 
     @Column(name = "units_in_pack", nullable = false)
-    private Integer unitsInPack; // Number of units per pack
+    private Integer unitsInPack;
 
-    // Precision 10, scale 2: e.g., 12345678.90
     @Column(name = "package_cost", precision = 10, scale = 2, nullable = false)
-    private BigDecimal packageCost; // Cost per pack in £
+    private BigDecimal packageCost;
 
     @Column(nullable = false)
-    private Integer availability; // Packs available in stock
+    private Integer availability;
 
     @Column(name = "min_stock_level", nullable = false)
-    private Integer minStockLevel; // Minimum stock limit (not shown to merchants)
+    private Integer minStockLevel;
 
-    // Precision 5, scale 2: e.g., 10.00 = 10%
     @Column(name = "reorder_buffer_pct", precision = 5, scale = 2, nullable = false)
+    @Builder.Default
     private BigDecimal reorderBufferPct = BigDecimal.valueOf(10.00);
-    // Reorder buffer percentage, default 10%; can be adjusted per item (10–50%)
 }
