@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -81,11 +82,23 @@ public class OrderServiceImpl implements OrderService {
             items.add(item);
         }
 
+        // Apply fixed-rate discount at order time (FLEXIBLE plans are settled monthly)
+        BigDecimal discount = BigDecimal.ZERO;
+        com.infopharma.ipos_sa.entity.DiscountPlan plan = account.getDiscountPlan();
+        if (plan != null && plan.getPlanType() == com.infopharma.ipos_sa.entity.DiscountPlan.PlanType.FIXED
+                && !plan.getTiers().isEmpty()) {
+            BigDecimal rate = plan.getTiers().get(0).getDiscountRate()
+                    .divide(new BigDecimal("100"), 10, RoundingMode.HALF_UP);
+            discount = total.multiply(rate).setScale(2, RoundingMode.HALF_UP);
+            total = total.subtract(discount);
+        }
+
+        order.setDiscountApplied(discount);
         order.setTotalValue(total);
         Order savedOrder = orderRepository.save(order);
         orderItemRepository.saveAll(items);
 
-        // Auto-generate invoice
+        // Auto-generate invoice (amount due = discounted total)
         Invoice invoice = new Invoice();
         invoice.setInvoiceId(generateInvoiceId());
         invoice.setOrder(savedOrder);
@@ -94,8 +107,13 @@ public class OrderServiceImpl implements OrderService {
         invoice.setAmountDue(total);
         invoiceRepository.save(invoice);
 
-        // Update merchant balance
+        // Update merchant balance (discounted total increases the balance owed)
         account.setBalance(account.getBalance().add(total));
+
+        // Set payment due date to 30 days from today if not already set
+        if (account.getPaymentDueDate() == null) {
+            account.setPaymentDueDate(LocalDate.now().plusDays(30));
+        }
         userAccountRepository.save(account);
 
         return savedOrder;
@@ -121,6 +139,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> findIncomplete() {
         return orderRepository.findByStatusNot(Order.OrderStatus.DELIVERED);
+    }
+
+    @Override
+    @Transactional
+    public Order markBeingProcessed(String orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found: " + orderId));
+        order.setStatus(Order.OrderStatus.BEING_PROCESSED);
+        return orderRepository.save(order);
     }
 
     @Override

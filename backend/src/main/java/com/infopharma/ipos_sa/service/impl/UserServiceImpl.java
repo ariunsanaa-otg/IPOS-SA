@@ -95,6 +95,14 @@ public class UserServiceImpl implements UserService {
         List<UserAccount> merchants = userAccountRepository.findByAccountType(UserAccount.AccountType.MERCHANT);
         for (UserAccount account : merchants) {
             if (account.getPaymentDueDate() == null) continue;
+            // Only escalate status if there is an outstanding balance
+            if (account.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
+                if (account.getAccountStatus() != UserAccount.AccountStatus.NORMAL) {
+                    account.setAccountStatus(UserAccount.AccountStatus.NORMAL);
+                    userAccountRepository.save(account);
+                }
+                continue;
+            }
             long daysLate = ChronoUnit.DAYS.between(account.getPaymentDueDate(), LocalDate.now());
             if (daysLate > 30) {
                 account.setAccountStatus(UserAccount.AccountStatus.IN_DEFAULT);
