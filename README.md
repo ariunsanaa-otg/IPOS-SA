@@ -16,8 +16,13 @@ A full-stack pharmaceutical ordering and account management system built as a co
 | Database | PostgreSQL (hosted on Railway) |
 | Object mapping | ModelMapper 3.2.4 |
 | Boilerplate reduction | Lombok 1.18.38 |
-| Frontend | Vite + React |
-| Build tool | Maven |
+| Backend build | Maven |
+| Frontend framework | React 18 + TypeScript |
+| Frontend build | Vite 5 |
+| Routing | React Router v6 |
+| Icons | Lucide React |
+| State management | React Context API |
+| Fonts | Sora (UI) · JetBrains Mono (data) |
 
 ---
 
@@ -163,6 +168,74 @@ curl -X POST https://ipos-sa.up.railway.app/api/orders \
 
 ---
 
+## Frontend
+
+### Pages & Role-Based Access
+
+The frontend is a React SPA with 15 pages and full role-based routing. Every route is protected — users only see what their role permits.
+
+| Page | Path | Roles |
+|---|---|---|
+| Login | `/login` | All |
+| Dashboard | `/dashboard` | All |
+| Place order | `/orders/new` | All |
+| Order management | `/orders` | All |
+| Invoices | `/orders/invoices` | All |
+| Merchant balance | `/orders/balance` | Staff |
+| Payments | `/orders/payments` | Staff |
+| Debtor reminders | `/orders/reminders` | Manager / Admin |
+| Monthly discounts | `/orders/monthly-discounts` | Manager / Admin |
+| Merchant accounts | `/accounts` | Manager / Admin |
+| Create merchant | `/accounts/new` | Manager / Admin |
+| PU applications | `/accounts/pu-apps` | Manager / Admin |
+| Reports | `/reports/*` | Manager / Admin |
+| Catalogue | `/catalogue` | Admin |
+| Low stock | `/catalogue/low-stock` | Admin |
+| User management | `/accounts/users` | Admin |
+
+### Key Screens
+
+**Dashboard** — live KPIs on load: revenue month-to-date, incomplete orders, overdue merchants, low stock alerts. Modal popups surface urgent items immediately on login.
+
+**Order Management** — full order lifecycle table (ACCEPTED → BEING\_PROCESSED → DISPATCHED → DELIVERED) with inline status actions, courier detail entry, and dispatch recording.
+
+**Catalogue Management** — CRUD for all stock items, reorder buffer calculations, stock delivery recording with audit trail, low-stock report with recommended order quantities.
+
+**Merchant Accounts** — create/edit/suspend merchants, set credit limits, assign discount plans, view balances, and trigger manual status restores.
+
+**Reports** — 6 report types filtered by date range, rendered as structured data tables. Includes turnover, per-merchant order summaries, line-item detail, invoice lists, and stock turnover.
+
+**Payments** — record payments against specific invoices; balance recalculates in real time; auto-clears `SUSPENDED` status when account reaches zero balance.
+
+### State Management
+
+Two React Contexts handle all app state:
+
+- **`AuthContext`** — login/logout, session persistence in `sessionStorage`, role-based `hasRole()` helper used throughout protected routes
+- **`AppDataContext`** — central store for all business data (merchants, catalogue, orders, invoices, payments, discount plans). Loads everything in parallel on mount; selectively refreshes individual slices after mutations so the UI stays consistent without full reloads
+
+### API Layer
+
+```
+src/api/
+├── client.ts      # fetch wrapper with error handling
+├── endpoints.ts   # typed functions for every backend endpoint
+└── adapters.ts    # maps backend response shapes to frontend types
+```
+
+Vite proxies `/api/*` → `http://localhost:8080` in development. Production points to `https://ipos-sa.up.railway.app`.
+
+### Running the frontend
+
+```bash
+cd frontend
+npm install
+npm run dev       # dev server at http://localhost:5173
+npm run build     # production build
+```
+
+---
+
 ## Project Structure
 
 ```
@@ -177,7 +250,18 @@ backend/
 │   └── impl/          # Dedicated mapper implementations
 └── exception/         # GlobalExceptionHandler
 
-frontend/              # Vite + React frontend
+frontend/
+├── src/
+│   ├── api/           # client, endpoints, adapters
+│   ├── components/    # UI primitives (Button, Card, Badge, Modal, Table)
+│   │   └── Layout/    # Sidebar, Header
+│   ├── context/       # AuthContext, AppDataContext
+│   └── pages/         # 15 feature pages
+│       ├── accounts/
+│       ├── catalogue/
+│       ├── orders/
+│       └── reports/
+└── public/
 ```
 
 ---
