@@ -23,12 +23,12 @@ import static org.mockito.Mockito.*;
 /**
  * Unit tests for UserServiceImpl.
  *
- * Covers creating and updating accounts, deleting accounts (which must
- * also remove related payments, invoices, and orders first), updating
- * credit limits and discount plans, and the scheduled status update
+ * Covers creating and updating accounts, deleting accounts, updating
+ * credit limits and discount plans and the scheduled status update
  * that suspends or defaults overdue merchants.
  *
-  */
+ */
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
@@ -56,8 +56,8 @@ class UserServiceImplTest {
         merchantAccount.setIsActive(true);
     }
 
-    //   createAccount
 
+    //   createAccount
     // Creating am account should save it and return the saved object
     @Test
     void createAccount_savesAndReturnsAccount() {
@@ -69,8 +69,8 @@ class UserServiceImplTest {
         verify(userAccountRepository).save(merchantAccount);
     }
 
-    //   updateAccount
 
+    //   updateAccount
     // Updating an account should save the changes and return the updated version
     @Test
     void updateAccount_savesAndReturnsAccount() {
@@ -82,8 +82,8 @@ class UserServiceImplTest {
         verify(userAccountRepository).save(merchantAccount);
     }
 
-    //   deleteAccount
 
+    //   deleteAccount
     // Deleting an account that doesn't exist should throw an error
     @Test
     void deleteAccount_accountNotFound_throwsEntityNotFoundException() {
@@ -127,8 +127,8 @@ class UserServiceImplTest {
         verify(userAccountRepository).deleteById(1L);
     }
 
-    //   findOne
 
+    //   findAccount
     // Looking up an account that exists should return it
     @Test
     void findOne_found_returnsAccount() {
@@ -148,8 +148,8 @@ class UserServiceImplTest {
         assertThat(userService.findOne(99L)).isEmpty();
     }
 
-    //   findAll
 
+    //   findAll
     // Searching all accounts should return every account in the system
     @Test
     void findAll_returnsList() {
@@ -162,8 +162,8 @@ class UserServiceImplTest {
         assertThat(result).hasSize(2);
     }
 
-    //   updateDiscountPlan
 
+    //   updateDiscountPlan
     // Updating the discount plan to an account that doesn't exist should throw an error
     @Test
     void updateDiscountPlan_accountNotFound_throwsEntityNotFoundException() {
@@ -202,8 +202,8 @@ class UserServiceImplTest {
         verify(userAccountRepository).save(merchantAccount);
     }
 
-    //   updateCreditLimit
 
+    //   updateCreditLimit
     // Trying to update the credit limit for an account that doesn't exist should throw an error
     @Test
     void updateCreditLimit_accountNotFound_throwsEntityNotFoundException() {
@@ -227,8 +227,8 @@ class UserServiceImplTest {
         verify(userAccountRepository).save(merchantAccount);
     }
 
-    //   updateAllMerchantStatuses
 
+    //   updateAllMerchantStatuses
     // A merchant more than 30 days past their payment due date should be moved to IN_DEFAULT
     @Test
     void updateAllMerchantStatuses_overdueMoreThan30Days_setsInDefault() {

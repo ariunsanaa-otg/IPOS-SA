@@ -24,11 +24,12 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Below are the unit tests for OrderServiceImpl.
+ * Unit tests for OrderServiceImpl.
  *
  * All database calls are replaced with mocks (fake objects that return
  * pre-defined values), so these tests run without a real database.
  */
+
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
 
@@ -60,7 +61,7 @@ class OrderServiceImplTest {
     }
 
     // placeOrder
-    // If the account doesnt exist, then the order should not be created
+    // If the account doesn't exist, then the order should not be created
     @Test
     void placeOrder_accountNotFound_throwsEntityNotFoundException() {
         OrderRequest request = buildOrderRequest(99L, "ITEM001", 2);
@@ -127,7 +128,6 @@ class OrderServiceImplTest {
         assertThat(result.getStatus()).isEqualTo(Order.OrderStatus.ACCEPTED);
         assertThat(result.getPaymentStatus()).isEqualTo(Order.PaymentStatus.PENDING);
 
-        // Total = 12.50 * 2 = 25.00
         assertThat(result.getTotalValue()).isEqualByComparingTo(new BigDecimal("25.00"));
 
         assertThat(result.getOrderId()).startsWith("IP");
@@ -164,12 +164,7 @@ class OrderServiceImplTest {
     }
 
 
-    // add test here
-
-
-
     // findById
-
     // If an order exists it should be returned correctly
     @Test
     void findById_existingOrder_returnsOrder() {
@@ -183,7 +178,7 @@ class OrderServiceImplTest {
         assertThat(result.get().getOrderId()).isEqualTo("IP1234");
     }
 
-    // If order ID doesnt exist it should return an empty result rather than an error
+    // If order ID doesn't exist it should return an empty result rather than an error
     @Test
     void findById_missingOrder_returnsEmpty() {
         when(orderRepository.findById("MISSING")).thenReturn(Optional.empty());
@@ -191,8 +186,8 @@ class OrderServiceImplTest {
         assertThat(orderService.findById("MISSING")).isEmpty();
     }
 
-    // findAll
 
+    // findAll
     // All orders should be returned upon request
     @Test
     void findAll_returnsList() {
@@ -206,8 +201,8 @@ class OrderServiceImplTest {
         assertThat(result).extracting(Order::getOrderId).containsExactly("IP0001", "IP0002");
     }
 
-    //   findByAccountId
 
+    //   findByAccountId
     // If an account cannot be found/doesnt exist it should throw an error
     @Test
     void findByAccountId_accountNotFound_throwsEntityNotFoundException() {
@@ -231,8 +226,8 @@ class OrderServiceImplTest {
         assertThat(result.get(0).getOrderId()).isEqualTo("IP1111");
     }
 
-    //   findIncomplete
 
+    //   findIncomplete
     // When searching for incomplete orders, it should exclude any orders that have been delivered
     @Test
     void findIncomplete_delegatesToRepository() {
@@ -245,8 +240,8 @@ class OrderServiceImplTest {
         verify(orderRepository).findByStatusNot(Order.OrderStatus.DELIVERED);
     }
 
-    // Dispatch
 
+    // Dispatch
     // Dispatching an order that doesn't exist should throw an error
     @Test
     void dispatch_orderNotFound_throwsEntityNotFoundException() {
@@ -280,8 +275,8 @@ class OrderServiceImplTest {
         verify(dispatchMapper).applyTo(dispatchRequest, order);
     }
 
-    //   markDelivered
 
+    //   markDelivered
     // Attempting to mark a non-existent order as delivered should throw an error
     @Test
     void markDelivered_orderNotFound_throwsEntityNotFoundException() {
@@ -308,8 +303,8 @@ class OrderServiceImplTest {
         assertThat(result.getDeliveryDate()).isEqualTo(LocalDate.now());
     }
 
-    //  helpers
 
+    //  helpers
     private OrderRequest buildOrderRequest(Long accountId, String itemId, int qty) {
         OrderRequest.OrderItemRequest itemReq = new OrderRequest.OrderItemRequest();
         itemReq.setItemId(itemId);
