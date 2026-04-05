@@ -5,13 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="918820a7-de2a-4a12-b7b9-ebbcdd6c4057" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/infopharma/ipos_sa/entity/UserAccount.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -28,10 +34,10 @@
     &quot;accountId&quot;: &quot;aed11ef5-40f4-4f03-b15e-e2e4d993cb29&quot;
   }
 }</component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -42,21 +48,92 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JUnit.OrderServiceImplTest.executor": "Run",
+    "JUnit.OrderServiceImplTest.placeOrder_insufficientStock_throwsIllegalStateException.executor": "Run",
+    "JUnit.UserServiceImplTest.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feature/backend-skeleton",
+    "Spring Boot.IposSaApplication.executor": "Run",
+    "git-widget-placeholder": "feature/junit-testing-aadam",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/neilk/Personal Coding Projects/IPOS-SA/backend",
+    "last_directory_selection": "/Users/aadam/Desktop/YEAR 2 CS/TEAM PROJECT/IPOS-SA/backend/src/test/java",
+    "last_opened_file_path": "/Users/aadam/Desktop/YEAR 2 CS/TEAM PROJECT/IPOS-SA",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Global Libraries",
-    "project.structure.proportion": "0.0",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager" selected="JUnit.UserServiceImplTest">
+    <configuration name="OrderServiceImplTest" type="JUnit" factoryName="JUnit">
+      <module name="ipos-sa" />
+      <option name="PACKAGE_NAME" value="com.infopharma.ipos_sa.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.infopharma.ipos_sa.service.impl.OrderServiceImplTest" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OrderServiceImplTest.placeOrder_insufficientStock_throwsIllegalStateException" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ipos-sa" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.infopharma.ipos_sa.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.infopharma.ipos_sa.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.infopharma.ipos_sa.service.impl.OrderServiceImplTest" />
+      <option name="METHOD_NAME" value="placeOrder_insufficientStock_throwsIllegalStateException" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserServiceImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ipos-sa" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.infopharma.ipos_sa.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.infopharma.ipos_sa.service" />
+      <option name="MAIN_CLASS_NAME" value="com.infopharma.ipos_sa.service.UserServiceImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IposSaApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="ipos-sa" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.infopharma.ipos_sa.IposSaApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="JUnit.OrderServiceImplTest" />
+      <item itemvalue="JUnit.OrderServiceImplTest.placeOrder_insufficientStock_throwsIllegalStateException" />
+      <item itemvalue="JUnit.UserServiceImplTest" />
+      <item itemvalue="Spring Boot.IposSaApplication" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.UserServiceImplTest" />
+        <item itemvalue="JUnit.OrderServiceImplTest.placeOrder_insufficientStock_throwsIllegalStateException" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -76,6 +153,9 @@
       <workItem from="1772968885370" duration="214000" />
       <workItem from="1772970286882" duration="247000" />
       <workItem from="1772970541745" duration="848000" />
+      <workItem from="1775219111001" duration="293000" />
+      <workItem from="1775387438390" duration="269000" />
+      <workItem from="1775392008354" duration="8636000" />
     </task>
     <servers />
   </component>
