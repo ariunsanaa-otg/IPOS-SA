@@ -6,6 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="918820a7-de2a-4a12-b7b9-ebbcdd6c4057" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/infopharma/ipos_sa/CatalogueServiceImplTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/infopharma/ipos_sa/IposSaApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/infopharma/ipos_sa/OrderControllerTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/infopharma/ipos_sa/OrderServiceImplTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/infopharma/ipos_sa/PaymentServiceImplTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/test/java/com/infopharma/ipos_sa/UserServiceImplTest.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +78,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="JUnit.UserServiceImplTest">
+  <component name="RunManager" selected="JUnit.OrderServiceImplTest">
     <configuration name="OrderServiceImplTest" type="JUnit" factoryName="JUnit">
       <module name="ipos-sa" />
       <option name="PACKAGE_NAME" value="com.infopharma.ipos_sa.service.impl" />
@@ -155,7 +161,7 @@
       <workItem from="1772970541745" duration="848000" />
       <workItem from="1775219111001" duration="293000" />
       <workItem from="1775387438390" duration="269000" />
-      <workItem from="1775392008354" duration="8636000" />
+      <workItem from="1775392008354" duration="9296000" />
     </task>
     <servers />
   </component>
