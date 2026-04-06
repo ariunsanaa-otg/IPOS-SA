@@ -102,6 +102,7 @@ export function AccountManagementPage() {
   });
 
   const openAdd  = () => { setEditMerchant(null); setForm(EMPTY_FORM); setModalOpen(true); };
+
   useEffect(() => {
     if (location.pathname === '/accounts/new') {
       openAdd();
@@ -114,6 +115,7 @@ export function AccountManagementPage() {
       navigate('/accounts');
     }
   };
+
   const openEdit = (m: Merchant) => { setEditMerchant(m); setForm(merchantToForm(m)); setModalOpen(true); };
 
   const handleSave = async () => {
@@ -140,7 +142,8 @@ export function AccountManagementPage() {
           loginUsername: form.loginUsername,
         });
       }
-      setModalOpen(false);
+      {/* setModalOpen(false); */}
+      closeModal();
     } catch (e) {
       alert(`Failed to save: ${e instanceof Error ? e.message : String(e)}`);
     }
@@ -428,10 +431,13 @@ export function AccountManagementPage() {
       </Modal>
 
       {/* Add/Edit Modal */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}
+
+      {/* <Modal open={modalOpen} onClose={() => setModalOpen(false)} */}
+      <Modal open={modalOpen} onClose={closeModal}
         title={editMerchant ? `Edit: ${editMerchant.companyName}` : 'Create Merchant Account'} width={640}
         footer={<>
-          <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
+        {/* <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button> */}
+          <Button variant="ghost" onClick={closeModal}>Cancel</Button>
           <Button onClick={handleSave}>{editMerchant ? 'Save Changes' : 'Create Account'}</Button>
         </>}
       >
