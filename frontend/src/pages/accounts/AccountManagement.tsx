@@ -6,6 +6,7 @@ import { Table } from '@/components/ui/Table';
 import { Button } from '@/components/ui/Button';
 import { AccountStatusBadge } from '@/components/ui/Badge';
 import { Modal, Field, Input, Select } from '@/components/ui/Modal';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useAppData } from '@/context/AppDataContext';
 import type { Merchant, TableColumn, AccountStatus, DiscountPlan } from '@/types';
@@ -71,6 +72,8 @@ export function AccountManagementPage() {
     setMerchantStatus, recordPayment, getMerchantInvoices,
   } = useAppData();
   const isManager = hasRole('admin', 'manager');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [search, setSearch]             = useState('');
   const [statusFilter, setStatusFilter] = useState<AccountStatus | 'all'>('all');
@@ -99,6 +102,18 @@ export function AccountManagementPage() {
   });
 
   const openAdd  = () => { setEditMerchant(null); setForm(EMPTY_FORM); setModalOpen(true); };
+  useEffect(() => {
+    if (location.pathname === '/accounts/new') {
+      openAdd();
+    }
+  }, [location.pathname]);
+
+  const closeModal = () => {
+    setModalOpen(false);
+    if (location.pathname === '/accounts/new') {
+      navigate('/accounts');
+    }
+  };
   const openEdit = (m: Merchant) => { setEditMerchant(m); setForm(merchantToForm(m)); setModalOpen(true); };
 
   const handleSave = async () => {
