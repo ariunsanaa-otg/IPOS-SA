@@ -52,12 +52,12 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     label:'Reports', icon:<FileText size={17} />, roles:['admin','manager'],
-    children:[
-      { label:'Turnover Report',        to:'/reports/turnover' },
-      { label:'Merchant Summary',       to:'/reports/merchant-summary' },
-      { label:'Merchant Detailed',      to:'/reports/merchant-detailed' },
-      { label:'Stock Turnover',         to:'/reports/stock-turnover' },
-      { label:'Invoice Reports',        to:'/reports/invoices' },
+   children:[
+      { label:'Turnover Report',        to:'/reports/turnover',           exact: true },
+      { label:'Merchant Summary',       to:'/reports/merchant-summary',   exact: true },
+      { label:'Merchant Detailed',      to:'/reports/merchant-detailed',  exact: true },
+      { label:'Stock Turnover',         to:'/reports/stock-turnover',     exact: true },
+      { label:'Invoice Reports',        to:'/reports/invoices',           exact: true },
     ],
   },
 ];
