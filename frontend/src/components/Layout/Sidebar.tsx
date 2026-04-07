@@ -22,9 +22,9 @@ const NAV_ITEMS: NavItem[] = [
   {
     label:'Catalogue', icon:<BookOpen size={17} />, roles:['admin'],
     children:[
-      { label:'Browse Catalogue',  to:'/catalogue' },
-      { label:'Add Item',          to:'/catalogue/add' },
-      { label:'Low Stock Report',  to:'/catalogue/low-stock' },
+      { label:'Browse Catalogue',  to:'/catalogue',           exact: true },
+      { label:'Add Item',          to:'/catalogue/add',       exact: true },
+      { label:'Low Stock Report',  to:'/catalogue/low-stock', exact: true },
     ],
   },
   {
