@@ -20,6 +20,11 @@ import { AccountManagementPage }    from '@/pages/accounts/AccountManagement';
 import { UserManagementPage }       from '@/pages/accounts/UserManagement';
 import { PUApplicationsPage }       from '@/pages/accounts/PUApplicationsPage';
 import { ReportsPage }              from '@/pages/reports/Reports';
+import { TurnoverReportPage }         from '@/pages/reports/TurnoverReportPage';
+import { MerchantSummaryReportPage }  from '@/pages/reports/MerchantSummaryReportPage';
+import { MerchantDetailedReportPage } from '@/pages/reports/MerchantDetailedReportPage';
+import { InvoiceReportPage }          from '@/pages/reports/InvoiceReportPage';
+import { StockTurnoverReportPage }    from '@/pages/reports/StockTurnoverReportPage';
 import type { UserRole } from '@/types';
 
 function AppShell() {
@@ -103,11 +108,11 @@ function AppRoutes() {
           <Route path="/accounts/new"         element={<AccountManagementPage />} />
           <Route path="/accounts/pu-apps"     element={<PUApplicationsPage />} />
           <Route path="/reports"              element={<ReportsPage />} />
-          <Route path="/reports/turnover"           element={<ReportsPage />} />
-          <Route path="/reports/merchant-summary"   element={<ReportsPage />} />
-          <Route path="/reports/merchant-detailed"  element={<ReportsPage />} />
-          <Route path="/reports/stock-turnover"     element={<ReportsPage />} />
-          <Route path="/reports/invoices"           element={<ReportsPage />} />
+          <Route path="/reports/turnover"           element={<TurnoverReportPage />} />
+          <Route path="/reports/merchant-summary"   element={<MerchantSummaryReportPage />} />
+          <Route path="/reports/merchant-detailed"  element={<MerchantDetailedReportPage />} />
+          <Route path="/reports/stock-turnover"     element={<StockTurnoverReportPage />} />
+          <Route path="/reports/invoices"           element={<InvoiceReportPage />} />
         </Route>
       </Route>
 
