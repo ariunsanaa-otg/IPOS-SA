@@ -12,7 +12,8 @@ interface NavItem {
   icon: React.ReactNode;
   to?: string;
   badge?: string;
-  children?: { label: string; to: string; badge?: string; roles?: UserRole[] }[];
+/* children?: { label: string; to: string; badge?: string; roles?: UserRole[] }[]; */
+  children?: { label: string; to: string; badge?: string; roles?: UserRole[]; exact?: boolean }[];
   roles?: UserRole[];
 }
 
@@ -29,7 +30,8 @@ const NAV_ITEMS: NavItem[] = [
   {
     label:'Orders', icon:<ShoppingCart size={17} />,
     children:[
-      { label:'All Orders',       to:'/orders' },
+      /* { label:'All Orders',       to:'/orders' }, */
+      { label:'All Orders', to:'/orders', exact: true },
       { label:'Place Order',      to:'/orders/new' },
       { label:'Invoices',         to:'/orders/invoices' },
       { label:'Merchant Balances',    to:'/orders/balance',            roles:['admin','manager','clerk'] },
@@ -41,7 +43,8 @@ const NAV_ITEMS: NavItem[] = [
   {
     label:'Accounts', icon:<Users size={17} />, roles:['admin','manager'],
     children:[
-      { label:'Merchant Accounts', to:'/accounts' },
+      /* { label:'Merchant Accounts', to:'/accounts' }, */
+      { label:'Merchant Accounts', to:'/accounts', exact: true },
       { label:'Create Account',    to:'/accounts/new' },
       { label:'User Management',   to:'/accounts/users' },
       { label:'PU Applications',   to:'/accounts/pu-apps', badge:'new' },
@@ -80,8 +83,9 @@ function NavGroup({ item }: { item: NavItem }) {
       {open && visibleChildren.length > 0 && (
         <div style={{ paddingLeft:'34px', paddingBottom:'4px' }}>
           {visibleChildren.map(child => (
-            <NavLink key={child.to} to={child.to}
-              style={({ isActive }) => ({
+            /*<NavLink key={child.to} to={child.to}*/
+              <NavLink key={child.to} to={child.to}
+                       style={({ isActive }) => ({
                 display:'flex', alignItems:'center', justifyContent:'space-between',
                 padding:'7px 10px', fontSize:'12.5px',
                 fontWeight: isActive ? 600 : 400,
