@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, Search, Edit2, Eye, ShieldAlert, ShieldCheck, ShieldOff, Trash2, Printer } from 'lucide-react';
 import { Page } from '@/components/Layout/Header';
 import { Card } from '@/components/ui/Card';
