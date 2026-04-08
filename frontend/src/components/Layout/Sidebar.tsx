@@ -12,7 +12,8 @@ interface NavItem {
   icon: React.ReactNode;
   to?: string;
   badge?: string;
-  children?: { label: string; to: string; badge?: string; roles?: UserRole[] }[];
+/* children?: { label: string; to: string; badge?: string; roles?: UserRole[] }[]; */
+  children?: { label: string; to: string; badge?: string; roles?: UserRole[]; exact?: boolean }[];
   roles?: UserRole[];
 }
 
@@ -21,15 +22,16 @@ const NAV_ITEMS: NavItem[] = [
   {
     label:'Catalogue', icon:<BookOpen size={17} />, roles:['admin'],
     children:[
-      { label:'Browse Catalogue',  to:'/catalogue' },
-      { label:'Add Item',          to:'/catalogue/add' },
-      { label:'Low Stock Report',  to:'/catalogue/low-stock' },
+      { label:'Browse Catalogue',  to:'/catalogue',           exact: true },
+      { label:'Add Item',          to:'/catalogue/add',       exact: true },
+      { label:'Low Stock Report',  to:'/catalogue/low-stock', exact: true },
     ],
   },
   {
     label:'Orders', icon:<ShoppingCart size={17} />,
     children:[
-      { label:'All Orders',       to:'/orders' },
+      /* { label:'All Orders',       to:'/orders' }, */
+      { label:'All Orders', to:'/orders', exact: true },
       { label:'Place Order',      to:'/orders/new' },
       { label:'Invoices',         to:'/orders/invoices' },
       { label:'Merchant Balances',    to:'/orders/balance',            roles:['admin','manager','clerk'] },
@@ -41,7 +43,8 @@ const NAV_ITEMS: NavItem[] = [
   {
     label:'Accounts', icon:<Users size={17} />, roles:['admin','manager'],
     children:[
-      { label:'Merchant Accounts', to:'/accounts' },
+      /* { label:'Merchant Accounts', to:'/accounts' }, */
+      { label:'Merchant Accounts', to:'/accounts', exact: true },
       { label:'Create Account',    to:'/accounts/new' },
       { label:'User Management',   to:'/accounts/users' },
       { label:'PU Applications',   to:'/accounts/pu-apps', badge:'new' },
@@ -49,12 +52,12 @@ const NAV_ITEMS: NavItem[] = [
   },
   {
     label:'Reports', icon:<FileText size={17} />, roles:['admin','manager'],
-    children:[
-      { label:'Turnover Report',        to:'/reports/turnover' },
-      { label:'Merchant Summary',       to:'/reports/merchant-summary' },
-      { label:'Merchant Detailed',      to:'/reports/merchant-detailed' },
-      { label:'Stock Turnover',         to:'/reports/stock-turnover' },
-      { label:'Invoice Reports',        to:'/reports/invoices' },
+   children:[
+      { label:'Turnover Report',        to:'/reports/turnover',           exact: true },
+      { label:'Merchant Summary',       to:'/reports/merchant-summary',   exact: true },
+      { label:'Merchant Detailed',      to:'/reports/merchant-detailed',  exact: true },
+      { label:'Stock Turnover',         to:'/reports/stock-turnover',     exact: true },
+      { label:'Invoice Reports',        to:'/reports/invoices',           exact: true },
     ],
   },
 ];
@@ -80,8 +83,9 @@ function NavGroup({ item }: { item: NavItem }) {
       {open && visibleChildren.length > 0 && (
         <div style={{ paddingLeft:'34px', paddingBottom:'4px' }}>
           {visibleChildren.map(child => (
-            <NavLink key={child.to} to={child.to}
-              style={({ isActive }) => ({
+            /*<NavLink key={child.to} to={child.to}*/
+              <NavLink key={child.to} to={child.to}
+                       style={({ isActive }) => ({
                 display:'flex', alignItems:'center', justifyContent:'space-between',
                 padding:'7px 10px', fontSize:'12.5px',
                 fontWeight: isActive ? 600 : 400,
