@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, Search, Edit2, Eye, ShieldAlert, ShieldCheck, ShieldOff, Trash2, Printer } from 'lucide-react';
 import { Page } from '@/components/Layout/Header';
 import { Card } from '@/components/ui/Card';
@@ -6,6 +6,7 @@ import { Table } from '@/components/ui/Table';
 import { Button } from '@/components/ui/Button';
 import { AccountStatusBadge } from '@/components/ui/Badge';
 import { Modal, Field, Input, Select } from '@/components/ui/Modal';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useAppData } from '@/context/AppDataContext';
 import type { Merchant, TableColumn, AccountStatus, DiscountPlan } from '@/types';
@@ -71,6 +72,8 @@ export function AccountManagementPage() {
     setMerchantStatus, recordPayment, getMerchantInvoices,
   } = useAppData();
   const isManager = hasRole('admin', 'manager');
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const [search, setSearch]             = useState('');
   const [statusFilter, setStatusFilter] = useState<AccountStatus | 'all'>('all');
@@ -99,6 +102,20 @@ export function AccountManagementPage() {
   });
 
   const openAdd  = () => { setEditMerchant(null); setForm(EMPTY_FORM); setModalOpen(true); };
+
+  useEffect(() => {
+    if (location.pathname === '/accounts/new') {
+      openAdd();
+    }
+  }, [location.pathname]);
+
+  const closeModal = () => {
+    setModalOpen(false);
+    if (location.pathname === '/accounts/new') {
+      navigate('/accounts');
+    }
+  };
+
   const openEdit = (m: Merchant) => { setEditMerchant(m); setForm(merchantToForm(m)); setModalOpen(true); };
 
   const handleSave = async () => {
@@ -125,7 +142,8 @@ export function AccountManagementPage() {
           loginUsername: form.loginUsername,
         });
       }
-      setModalOpen(false);
+      {/* setModalOpen(false); */}
+      closeModal();
     } catch (e) {
       alert(`Failed to save: ${e instanceof Error ? e.message : String(e)}`);
     }
@@ -413,10 +431,13 @@ export function AccountManagementPage() {
       </Modal>
 
       {/* Add/Edit Modal */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}
+
+      {/* <Modal open={modalOpen} onClose={() => setModalOpen(false)} */}
+      <Modal open={modalOpen} onClose={closeModal}
         title={editMerchant ? `Edit: ${editMerchant.companyName}` : 'Create Merchant Account'} width={640}
         footer={<>
-          <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
+        {/* <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button> */}
+          <Button variant="ghost" onClick={closeModal}>Cancel</Button>
           <Button onClick={handleSave}>{editMerchant ? 'Save Changes' : 'Create Account'}</Button>
         </>}
       >
