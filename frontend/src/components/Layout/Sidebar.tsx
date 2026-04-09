@@ -84,7 +84,7 @@ function NavGroup({ item }: { item: NavItem }) {
         <div style={{ paddingLeft:'34px', paddingBottom:'4px' }}>
           {visibleChildren.map(child => (
             /*<NavLink key={child.to} to={child.to}*/
-              <NavLink key={child.to} to={child.to}
+              <NavLink key={child.to} to={child.to} end={child.exact}
                        style={({ isActive }) => ({
                 display:'flex', alignItems:'center', justifyContent:'space-between',
                 padding:'7px 10px', fontSize:'12.5px',
