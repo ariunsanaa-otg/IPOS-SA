@@ -1,4 +1,4 @@
-package com.infopharma.ipos_sa.servicee;
+package com.infopharma.ipos_sa.subsystem;
 
 import com.infopharma.ipos_sa.dto.OrderRequest;
 import com.infopharma.ipos_sa.entity.*;
