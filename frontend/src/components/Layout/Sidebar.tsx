@@ -13,9 +13,7 @@ interface NavItem {
   to?: string;
   badge?: string;
 /* children?: { label: string; to: string; badge?: string; roles?: UserRole[] }[]; */
-  children?: { label: string; to: string; badge?: string; roles?: UserRole[]; exact?: boolean }[];
-  roles?: UserRole[];
-}
+    children?: { label: string; to: string; badge?: string; roles?: UserRole[]; exact?: boolean }[];}
 
 const NAV_ITEMS: NavItem[] = [
   { label:'Dashboard', icon:<LayoutDashboard size={17} />, to:'/dashboard' },
@@ -84,8 +82,7 @@ function NavGroup({ item }: { item: NavItem }) {
         <div style={{ paddingLeft:'34px', paddingBottom:'4px' }}>
           {visibleChildren.map(child => (
             /*<NavLink key={child.to} to={child.to}*/
-              <NavLink key={child.to} to={child.to} end={child.exact}
-                       style={({ isActive }) => ({
+              <NavLink key={child.to} to={child.to} end={child.exact}                       style={({ isActive }) => ({
                 display:'flex', alignItems:'center', justifyContent:'space-between',
                 padding:'7px 10px', fontSize:'12.5px',
                 fontWeight: isActive ? 600 : 400,
