@@ -93,20 +93,20 @@ BEGIN
       (item_id, description, package_type, unit, units_in_pack, package_cost,
        availability, min_stock_level, reorder_buffer_pct)
     VALUES
-      ('100 00001', 'Paracetamol',           'box',    'Caps', 20,  0.10,  10285, 300, 10.00),
-      ('100 00002', 'Aspirin',               'box',    'Caps', 20,  0.50,  12453, 500, 10.00),
-      ('100 00003', 'Analgin',               'box',    'Caps', 10,  1.20,  4115,  200, 10.00),
-      ('100 00004', 'Celebrex, caps 100 mg', 'box',    'Caps', 10,  10.00, 3410,  200, 15.00),
-      ('100 00005', 'Celebrex, caps 200 mg', 'box',    'Caps', 10,  18.50, 1440,  150, 15.00),
-      ('100 00006', 'Retin-A Tretin, 30 g',  'box',    'Caps', 20,  25.00, 2003,  200, 10.00),
-      ('100 00007', 'Lipitor TB, 20 mg',     'box',    'Caps', 30,  15.50, 1542,  200, 10.00),
-      ('100 00008', 'Claritin CR, 60g',      'box',    'Caps', 20,  19.50, 2540,  200, 10.00),
-      ('200 00004', 'Iodine tincture',       'bottle', 'ml',   100, 0.30,  87,    200, 10.00),
-      ('200 00005', 'Rhynol',                'bottle', 'ml',   200, 2.50,  1878,  300, 10.00),
-      ('300 00001', 'Ospen',                 'box',    'Caps', 20,  10.50, 776,   200, 10.00),
-      ('300 00002', 'Amopen',                'box',    'Caps', 30,  15.00, 1230,  300, 10.00),
-      ('400 00001', 'Vitamin C',             'box',    'Caps', 30,  1.20,  3218,  300, 10.00),
-      ('400 00002', 'Vitamin B12',           'box',    'Caps', 30,  1.30,  2573,  300, 10.00);
+        ('100 00001', 'Paracetamol',           'box',    'Caps', 20,  0.10,  10345,  300, 10.00),
+        ('100 00002', 'Aspirin',               'box',    'Caps', 20,  0.50,  12453,  500, 10.00),
+        ('100 00003', 'Analgin',               'box',    'Caps', 10,  1.20,  4235,   200, 10.00),
+        ('100 00004', 'Celebrex, caps 100 mg', 'box',    'Caps', 10,  10.00, 3420,   200, 15.00),
+        ('100 00005', 'Celebrex, caps 200 mg', 'box',    'Caps', 10,  18.50, 1450,   150, 15.00),
+        ('100 00006', 'Retin-A Tretin, 30 g',  'box',    'Caps', 20,  25.00, 2013,   200, 10.00),
+        ('100 00007', 'Lipitor TB, 20 mg',     'box',    'Caps', 30,  15.50, 1562,   200, 10.00),
+        ('100 00008', 'Claritin CR, 60g',      'box',    'Caps', 20,  19.50, 2540,   200, 10.00),
+        ('200 00004', 'Iodine tincture',       'bottle', 'ml',   100, 0.30,  22134,  200, 10.00),
+        ('200 00005', 'Rhynol',                'bottle', 'ml',   200, 2.50,  1908,   300, 10.00),
+        ('300 00001', 'Ospen',                 'box',    'Caps', 20,  10.50, 809,    200, 10.00),
+        ('300 00002', 'Amopen',                'box',    'Caps', 30,  15.00, 1340,   300, 10.00),
+        ('400 00001', 'Vitamin C',             'box',    'Caps', 30,  1.20,  3258,   300, 10.00),
+        ('400 00002', 'Vitamin B12',           'box',    'Caps', 30,  1.30,  2673,   300, 10.00);
 
     -- ── Historical demo data ──────────────────────────────────
     -- Account IDs depend on IDENTITY sequence: 7 staff → IDs 1-7, then merchants 8-10.
