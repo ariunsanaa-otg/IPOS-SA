@@ -42,6 +42,8 @@ const ACCOUNT_TYPE_TO_ROLE: Record<string, UserRole> = {
 // Local staff fallback (no backend rows for warehouse/clerk/delivery)
 // These are used ONLY if the backend doesn't have those accounts yet.
 const LOCAL_STAFF: (User & { password: string })[] = [
+    //remove after local test!!!
+  { id: "local-0", username: "Sysdba", password: "London_weighting", role: "admin" },
   {
     id: "local-3",
     username: "accountant",
