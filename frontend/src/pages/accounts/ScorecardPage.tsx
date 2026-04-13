@@ -1,199 +1,138 @@
-import { useMemo } from 'react';
-import { TrendingUp, AlertTriangle, CheckCircle, XCircle, CreditCard, ShoppingCart, FileText } from 'lucide-react';
-import { Page } from '@/components/Layout/Header';
-import { Card } from '@/components/ui/Card';
+import React, { useMemo } from 'react';
 import { useAppData } from '@/context/AppDataContext';
+import { ClipboardList, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
-function getScoreColor(score: number) {
-  if (score >= 75) return '#6daa45';
-  if (score >= 50) return '#e8af34';
-  return '#a13544';
+const GRADES = [
+  { min: 90, label: 'A+', color: '#065f46', bg: '#d1fae5' },
+  { min: 80, label: 'A',  color: '#065f46', bg: '#d1fae5' },
+  { min: 70, label: 'B',  color: '#1e40af', bg: '#dbeafe' },
+  { min: 60, label: 'C',  color: '#92400e', bg: '#fef3c7' },
+  { min: 50, label: 'D',  color: '#9a3412', bg: '#ffedd5' },
+  { min: 0,  label: 'F',  color: '#991b1b', bg: '#fee2e2' },
+];
+
+function getGrade(score: number) {
+  return GRADES.find((g) => score >= g.min) ?? GRADES[GRADES.length - 1];
 }
 
-function getScoreLabel(score: number) {
-  if (score >= 75) return 'Healthy';
-  if (score >= 50) return 'At Risk';
-  return 'Critical';
-}
-
-function getScoreIcon(score: number) {
-  if (score >= 75) return <CheckCircle size={16} color="#6daa45" />;
-  if (score >= 50) return <AlertTriangle size={16} color="#e8af34" />;
-  return <XCircle size={16} color="#a13544" />;
-}
-
-function ScoreRing({ score }: { score: number }) {
-  const color = getScoreColor(score);
-  const radius = 36;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (score / 100) * circumference;
+function scoreBar(value: number) {
   return (
-    <div style={{ position: 'relative', width: 88, height: 88, flexShrink: 0 }}>
-      <svg width="88" height="88" style={{ transform: 'rotate(-90deg)' }}>
-        <circle cx="44" cy="44" r={radius} fill="none" stroke="var(--color-border)" strokeWidth="7" />
-        <circle cx="44" cy="44" r={radius} fill="none" stroke={color} strokeWidth="7"
-          strokeDasharray={circumference} strokeDashoffset={offset}
-          strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.6s ease' }}
-        />
-      </svg>
-      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <span style={{ fontSize: '18px', fontWeight: 800, fontFamily: 'var(--font-mono)', color }}>{score}</span>
-        <span style={{ fontSize: '9px', color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>/ 100</span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ flex: 1, height: '6px', background: 'var(--color-border)', borderRadius: '99px', overflow: 'hidden' }}>
+        <div style={{ width: `${Math.min(value, 100)}%`, height: '100%', background: 'var(--color-primary)', borderRadius: '99px', transition: 'width .4s' }} />
       </div>
+      <span style={{ fontSize: '12px', fontWeight: 600, minWidth: '36px', textAlign: 'right' }}>{value.toFixed(0)}%</span>
     </div>
   );
 }
 
-export default function ScorecardPage() {
-  const { orders, invoices, merchants } = useAppData();
+export function ScorecardPage() {
+  const { merchants, orders, invoices } = useAppData();
 
   const scorecards = useMemo(() => {
-    return merchants.map(merchant => {
-      const merchantOrders  = orders.filter(o => o.accountId === merchant.id);
-      const merchantInvoices = invoices.filter(i => i.merchantId === merchant.id);
+    return merchants.map((m) => {
+      const mInvoices = invoices.filter((inv) => inv.accountId === m.id);
+      const mOrders   = orders.filter((o) => o.accountId === m.id);
 
-      // 1. Payment score (40pts): % of invoices paid
-      const paidCount = merchantInvoices.filter(i => i.paymentStatus === 'PAID').length;
-      const paymentScore = merchantInvoices.length > 0
-        ? Math.round((paidCount / merchantInvoices.length) * 40)
-        : 0;
+      const totalInvoiced = mInvoices.reduce((s, i) => s + (i.totalAmount ?? 0), 0);
+      const totalPaid     = mInvoices.reduce((s, i) => s + (i.amountPaid ?? 0), 0);
+      const paymentScore  = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
 
-      // 2. Credit utilisation score (30pts): lower utilisation = better
-      const creditLimit = merchant.creditLimit ?? 1;
-      const balance = merchant.currentBalance ?? 0;
-      const utilisation = Math.min(balance / creditLimit, 1);
-      const creditScore = Math.round((1 - utilisation) * 30);
+      const delivered  = mOrders.filter((o) => o.status === 'DELIVERED').length;
+      const totalOrders = mOrders.length;
+      const fulfilmentScore = totalOrders > 0 ? (delivered / totalOrders) * 100 : 0;
 
-      // 3. Order activity score (30pts): more orders = better (cap at 10)
-      const orderScore = Math.min(merchantOrders.length, 10) * 3;
+      const isActive = totalOrders > 0;
+      const activityScore = isActive ? Math.min((totalOrders / 10) * 100, 100) : 0;
 
-      const totalScore = paymentScore + creditScore + orderScore;
+      const overall = Math.round((paymentScore * 0.5) + (fulfilmentScore * 0.3) + (activityScore * 0.2));
+      const grade   = getGrade(overall);
 
-      const pendingInvoices = merchantInvoices.filter(i => i.paymentStatus !== 'PAID').length;
-      const totalSpend = merchantOrders.reduce((s, o) => s + o.totalAmount, 0);
-
-      return {
-        id: merchant.id,
-        name: merchant.companyName,
-        contactName: merchant.contactName,
-        status: merchant.accountStatus,
-        creditLimit,
-        balance,
-        utilisation: Math.round(utilisation * 100),
-        totalScore,
-        paymentScore,
-        creditScore,
-        orderScore,
-        orderCount: merchantOrders.length,
-        pendingInvoices,
-        totalSpend,
-        invoiceCount: merchantInvoices.length,
-      };
-    }).sort((a, b) => b.totalScore - a.totalScore);
-  }, [orders, invoices, merchants]);
+      return { ...m, paymentScore, fulfilmentScore, activityScore, overall, grade, totalOrders, totalInvoiced, totalPaid };
+    }).sort((a, b) => b.overall - a.overall);
+  }, [merchants, orders, invoices]);
 
   return (
-    <Page title="Merchant Health Scorecards">
+    <div style={{ padding: '32px', maxWidth: '960px' }}>
+      {/* Header */}
+      <div style={{ marginBottom: '28px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+          <ClipboardList size={22} color="var(--color-primary)" />
+          <h1 style={{ fontSize: '20px', fontWeight: 700 }}>Merchant Scorecard</h1>
+        </div>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>
+          Each merchant is scored on payment reliability (50%), order fulfilment (30%), and activity (20%).
+        </p>
+      </div>
 
-      {/* Summary bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
-        {[
-          { label: 'Healthy', count: scorecards.filter(s => s.totalScore >= 75).length, color: '#6daa45' },
-          { label: 'At Risk', count: scorecards.filter(s => s.totalScore >= 50 && s.totalScore < 75).length, color: '#e8af34' },
-          { label: 'Critical', count: scorecards.filter(s => s.totalScore < 50).length, color: '#a13544' },
-        ].map(item => (
-          <Card key={item.label} padding="0">
-            <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color, flexShrink: 0 }} />
-              <div>
-                <p style={{ fontSize: '22px', fontWeight: 800, fontFamily: 'var(--font-mono)', color: item.color }}>{item.count}</p>
-                <p style={{ fontSize: '11px', color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.label}</p>
+      {/* Cards */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {scorecards.map((m, i) => (
+          <div
+            key={m.id}
+            style={{
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '12px',
+              padding: '20px 24px',
+              display: 'grid',
+              gridTemplateColumns: '2fr 1fr 1fr 1fr 80px',
+              gap: '16px',
+              alignItems: 'center',
+            }}
+          >
+            {/* Merchant name */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-text-muted)' }}>#{i + 1}</span>
+                <p style={{ fontWeight: 700, fontSize: '15px' }}>{m.companyName ?? m.contactName}</p>
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{m.totalOrders} orders</span>
+                <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
+                  £{m.totalPaid.toLocaleString('en-GB', { minimumFractionDigits: 2 })} paid of £{m.totalInvoiced.toLocaleString('en-GB', { minimumFractionDigits: 2 })}
+                </span>
               </div>
             </div>
-          </Card>
+
+            {/* Payment score */}
+            <div>
+              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '.04em' }}>Payment</p>
+              {scoreBar(m.paymentScore)}
+            </div>
+
+            {/* Fulfilment score */}
+            <div>
+              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '.04em' }}>Fulfilment</p>
+              {scoreBar(m.fulfilmentScore)}
+            </div>
+
+            {/* Activity score */}
+            <div>
+              <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '.04em' }}>Activity</p>
+              {scoreBar(m.activityScore)}
+            </div>
+
+            {/* Grade */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                display: 'inline-flex', flexDirection: 'column', alignItems: 'center',
+                background: m.grade.bg, color: m.grade.color,
+                borderRadius: '10px', padding: '8px 14px',
+              }}>
+                <span style={{ fontSize: '22px', fontWeight: 800, lineHeight: 1 }}>{m.grade.label}</span>
+                <span style={{ fontSize: '11px', fontWeight: 600, marginTop: '2px' }}>{m.overall}%</span>
+              </div>
+            </div>
+          </div>
         ))}
-      </div>
-
-      {/* Scorecards grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '16px' }}>
-        {scorecards.map(merchant => {
-          const color = getScoreColor(merchant.totalScore);
-          const statusColor = merchant.status === 'NORMAL' ? '#6daa45' : merchant.status === 'SUSPENDED' ? '#a13544' : '#e8af34';
-          return (
-            <Card key={merchant.id} padding="0">
-              {/* Header */}
-              <div style={{ padding: '16px', borderBottom: '1px solid var(--color-border)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <ScoreRing score={merchant.totalScore} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                    {getScoreIcon(merchant.totalScore)}
-                    <p style={{ fontWeight: 700, fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {merchant.name}
-                    </p>
-                  </div>
-                  <p style={{ fontSize: '11px', color: 'var(--color-text-3)' }}>{merchant.contactName}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '99px', background: `${color}22`, color }}>
-                      {getScoreLabel(merchant.totalScore)}
-                    </span>
-                    <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '99px', background: `${statusColor}22`, color: statusColor }}>
-                      {merchant.status.toLowerCase().replace('_', ' ')}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Score breakdown */}
-              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--color-border)' }}>
-                <p style={{ fontSize: '11px', color: 'var(--color-text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', fontWeight: 600 }}>
-                  Score Breakdown
-                </p>
-                {[
-                  { label: 'Payment History', score: merchant.paymentScore, max: 40 },
-                  { label: 'Credit Utilisation', score: merchant.creditScore, max: 30 },
-                  { label: 'Order Activity', score: merchant.orderScore, max: 30 },
-                ].map(item => (
-                  <div key={item.label} style={{ marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-                      <span style={{ fontSize: '11px', color: 'var(--color-text-2)' }}>{item.label}</span>
-                      <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', color: 'var(--color-text-2)' }}>{item.score}/{item.max}</span>
-                    </div>
-                    <div style={{ height: 5, background: 'var(--color-border)', borderRadius: '99px', overflow: 'hidden' }}>
-                      <div style={{
-                        height: '100%', borderRadius: '99px',
-                        width: `${(item.score / item.max) * 100}%`,
-                        background: getScoreColor((item.score / item.max) * 100),
-                        transition: 'width 0.6s ease',
-                      }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Stats */}
-              <div style={{ padding: '12px 16px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
-                {[
-                  { icon: <ShoppingCart size={12} />, label: 'Orders', value: merchant.orderCount },
-                  { icon: <FileText size={12} />, label: 'Pending Inv.', value: merchant.pendingInvoices },
-                  { icon: <CreditCard size={12} />, label: 'Credit Used', value: `${merchant.utilisation}%` },
-                ].map(stat => (
-                  <div key={stat.label} style={{ textAlign: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px', color: 'var(--color-text-3)', marginBottom: '2px' }}>
-                      {stat.icon}
-                      <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{stat.label}</span>
-                    </div>
-                    <p style={{ fontSize: '14px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{stat.value}</p>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          );
-        })}
 
         {scorecards.length === 0 && (
-          <p style={{ fontSize: '13px', color: 'var(--color-text-3)', padding: '32px' }}>No merchant data available.</p>
+          <div style={{ padding: '60px', textAlign: 'center', color: 'var(--color-text-muted)' }}>
+            No merchant data available.
+          </div>
         )}
       </div>
-    </Page>
+    </div>
   );
 }
