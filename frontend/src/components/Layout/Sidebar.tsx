@@ -9,9 +9,9 @@ import {
   LogOut,
   ChevronDown,
   ChevronRight,
-  AlertCircle,
-  Globe,
-  Bell,
+  BarChart2,
+  Trophy,
+  ClipboardList,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import type { UserRole } from "@/types";
@@ -21,7 +21,6 @@ interface NavItem {
   icon?: React.ReactNode;
   to?: string;
   badge?: string;
-  /* children?: { label: string; to: string; badge?: string; roles?: UserRole[] }[]; */
   children?: {
     label: string;
     to: string;
@@ -48,7 +47,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "Orders",
     icon: <ShoppingCart size={17} />,
     children: [
-      /* { label: 'All Orders',      to:'/orders' }, */
       { label: "All Orders", to: "/orders", end: true },
       { label: "Place Order", to: "/orders/new" },
       { label: "Invoices", to: "/orders/invoices" },
@@ -94,14 +92,16 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Turnover Report", to: "/reports/turnover", end: true },
       { label: "Merchant Summary", to: "/reports/merchant-summary", end: true },
-      {
-        label: "Merchant Detailed",
-        to: "/reports/merchant-detailed",
-        end: true,
-      },
+      { label: "Merchant Detailed", to: "/reports/merchant-detailed", end: true },
       { label: "Stock Turnover", to: "/reports/stock-turnover", end: true },
       { label: "Invoice Reports", to: "/reports/invoices", end: true },
     ],
+  },
+  {
+    label: "Analytics",
+    icon: <BarChart2 size={17} />,
+    roles: ["admin", "manager"],
+    to: "/analytics",
   },
 ];
 
@@ -249,24 +249,10 @@ export function Sidebar() {
             IP
           </div>
           <div>
-            <p
-              style={{
-                color: "#fff",
-                fontWeight: 700,
-                fontSize: "13px",
-                lineHeight: 1.2,
-              }}
-            >
+            <p style={{ color: "#fff", fontWeight: 700, fontSize: "13px", lineHeight: 1.2 }}>
               InfoPharma
             </p>
-            <p
-              style={{
-                color: "var(--color-sidebar-txt)",
-                fontSize: "10px",
-                letterSpacing: ".06em",
-                textTransform: "uppercase",
-              }}
-            >
+            <p style={{ color: "var(--color-sidebar-txt)", fontSize: "10px", letterSpacing: ".06em", textTransform: "uppercase" }}>
               IPOS-SA
             </p>
           </div>
@@ -299,9 +285,7 @@ export function Sidebar() {
                 color: isActive ? "#fff" : "var(--color-sidebar-txt)",
                 textDecoration: "none",
                 borderRadius: "var(--radius-sm)",
-                background: isActive
-                  ? "rgba(14,165,233,.2)"
-                  : "transparent",
+                background: isActive ? "rgba(14,165,233,.2)" : "transparent",
                 transition: "all .12s",
               })}
             >
@@ -315,58 +299,25 @@ export function Sidebar() {
       </nav>
 
       {/* User */}
-      <div
-        style={{
-          padding: "12px 16px",
-          borderTop: "1px solid rgba(255,255,255,.07)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            marginBottom: "10px",
-          }}
-        >
+      <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,.07)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
           <div
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
+              width: 32, height: 32, borderRadius: "50%",
               background: "rgba(14,165,233,.25)",
               border: "1px solid rgba(14,165,233,.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "12px",
-              fontWeight: 700,
-              color: "var(--color-primary)",
-              flexShrink: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: "12px", fontWeight: 700,
+              color: "var(--color-primary)", flexShrink: 0,
             }}
           >
             {user?.username?.[0]?.toUpperCase()}
           </div>
           <div style={{ overflow: "hidden" }}>
-            <p
-              style={{
-                color: "#fff",
-                fontSize: "12px",
-                fontWeight: 600,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
+            <p style={{ color: "#fff", fontSize: "12px", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {user?.username}
             </p>
-            <p
-              style={{
-                color: "var(--color-sidebar-txt)",
-                fontSize: "11px",
-                textTransform: "capitalize",
-              }}
-            >
+            <p style={{ color: "var(--color-sidebar-txt)", fontSize: "11px", textTransform: "capitalize" }}>
               {user?.role}
             </p>
           </div>
@@ -374,19 +325,10 @@ export function Sidebar() {
         <button
           onClick={handleLogout}
           style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "7px 10px",
-            background: "rgba(239,68,68,.1)",
-            border: "none",
-            borderRadius: "var(--radius-sm)",
-            cursor: "pointer",
-            color: "#f87171",
-            fontSize: "12px",
-            fontFamily: "var(--font-ui)",
-            fontWeight: 600,
+            width: "100%", display: "flex", alignItems: "center", gap: "8px",
+            padding: "7px 10px", background: "rgba(239,68,68,.1)", border: "none",
+            borderRadius: "var(--radius-sm)", cursor: "pointer",
+            color: "#f87171", fontSize: "12px", fontFamily: "var(--font-ui)", fontWeight: 600,
           }}
         >
           <LogOut size={14} /> Sign Out
