@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Search, Edit2, Trash2, AlertTriangle, Package } from 'lucide-react';
 import { Page } from '@/components/Layout/Header';
 import { Card } from '@/components/ui/Card';
@@ -6,6 +6,7 @@ import { Table } from '@/components/ui/Table';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Modal, Field, Input, Select } from '@/components/ui/Modal';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAppData } from '@/context/AppDataContext';
 import type { CatalogueItem, TableColumn } from '@/types';
 
@@ -27,6 +28,8 @@ export function CatalogueManagementPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<CatalogueItem | null>(null);
   const [newItemId, setNewItemId]       = useState('');
   const [saving, setSaving]             = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const filtered = catalogue.filter(
     item => item.id.toLowerCase().includes(search.toLowerCase()) ||
@@ -36,6 +39,18 @@ export function CatalogueManagementPage() {
   const lowStockItems = getLowStockItems();
 
   const openAdd = () => { setEditItem(null); setForm(EMPTY_ITEM); setNewItemId(''); setModalOpen(true); };
+  useEffect(() => {
+    if (location.pathname === '/catalogue/add') {
+      openAdd();
+    }
+  }, [location.pathname]);
+
+  const closeModal = () => {
+    setModalOpen(false);
+    if (location.pathname === '/catalogue/add') {
+      navigate('/catalogue');
+    }
+  };
 
   const openEdit = (item: CatalogueItem) => {
     setEditItem(item);
@@ -53,7 +68,8 @@ export function CatalogueManagementPage() {
       } else {
         await addCatalogueItem(form, newItemId.trim() || undefined);
       }
-      setModalOpen(false);
+      //setModalOpen(false);
+      closeModal();
     } catch (e) {
       alert(`Failed to save: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
@@ -175,10 +191,12 @@ export function CatalogueManagementPage() {
       </Modal>
 
       {/* Add / Edit Modal */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)}
+      {/* <Modal open={modalOpen} onClose={() => setModalOpen(false)} */}
+      <Modal open={modalOpen} onClose={() => closeModal()}
         title={editItem ? `Edit: ${editItem.description}` : 'Add Catalogue Item'} width={560}
         footer={<>
-          <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button>
+          {/* <Button variant="ghost" onClick={() => setModalOpen(false)}>Cancel</Button> */}
+          <Button variant="ghost" onClick={() => closeModal()}>Cancel</Button>
           <Button onClick={handleSave} disabled={saving}>{saving ? 'Saving…' : editItem ? 'Save Changes' : 'Add Item'}</Button>
         </>}
       >
