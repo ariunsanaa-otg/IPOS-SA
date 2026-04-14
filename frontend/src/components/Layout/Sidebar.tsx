@@ -61,11 +61,6 @@ const NAV_ITEMS: NavItem[] = [
         roles: ["admin", "manager", "clerk"],
       },
       {
-        label: "Debtor Reminders",
-        to: "/orders/reminders",
-        roles: ["admin", "manager"],
-      },
-      {
         label: "Monthly Discounts",
         to: "/orders/monthly-discounts",
         roles: ["admin", "manager"],
@@ -95,6 +90,12 @@ const NAV_ITEMS: NavItem[] = [
       { label: "Merchant Detailed", to: "/reports/merchant-detailed", end: true },
       { label: "Stock Turnover", to: "/reports/stock-turnover", end: true },
       { label: "Invoice Reports", to: "/reports/invoices", end: true },
+      {
+        label: "Debtor Reminders",
+        to: "/reports/reminders",
+        roles: ["admin", "manager"],
+        end: true,
+      },
     ],
   },
   {
@@ -109,7 +110,7 @@ function NavGroup({ item }: { item: NavItem }) {
   const [open, setOpen] = useState(false);
   const { hasRole } = useAuth();
   const visibleChildren = (item.children ?? []).filter(
-    (c) => !c.roles || hasRole(...c.roles)
+    (c) => !c.roles || hasRole(...c.roles),
   );
   return (
     <div>
@@ -147,7 +148,6 @@ function NavGroup({ item }: { item: NavItem }) {
         <span style={{ flex: 1 }}>{item.label}</span>
         {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
       </button>
-
       {open && visibleChildren.length > 0 && (
         <div style={{ paddingLeft: "34px", paddingBottom: "4px" }}>
           {visibleChildren.map((child) => (
@@ -207,7 +207,7 @@ export function Sidebar() {
   };
 
   const visibleItems = NAV_ITEMS.filter(
-    (item) => !item.roles || hasRole(...item.roles)
+    (item) => !item.roles || hasRole(...item.roles),
   );
 
   return (
@@ -230,7 +230,7 @@ export function Sidebar() {
           borderBottom: "1px solid rgba(255,255,255,.07)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <div
             style={{
               width: 36,
@@ -249,10 +249,24 @@ export function Sidebar() {
             IP
           </div>
           <div>
-            <p style={{ color: "#fff", fontWeight: 700, fontSize: "13px", lineHeight: 1.2 }}>
+            <p
+              style={{
+                color: "#fff",
+                fontWeight: 700,
+                fontSize: "13px",
+                lineHeight: 1.2,
+              }}
+            >
               InfoPharma
             </p>
-            <p style={{ color: "var(--color-sidebar-txt)", fontSize: "10px", letterSpacing: ".06em", textTransform: "uppercase" }}>
+            <p
+              style={{
+                color: "var(--color-sidebar-txt)",
+                fontSize: "10px",
+                letterSpacing: ".06em",
+                textTransform: "uppercase",
+              }}
+            >
               IPOS-SA
             </p>
           </div>
@@ -294,30 +308,63 @@ export function Sidebar() {
             </NavLink>
           ) : (
             <NavGroup key={item.label} item={item} />
-          )
+          ),
         )}
       </nav>
 
       {/* User */}
-      <div style={{ padding: "12px 16px", borderTop: "1px solid rgba(255,255,255,.07)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+      <div
+        style={{
+          padding: "12px 16px",
+          borderTop: "1px solid rgba(255,255,255,.07)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            marginBottom: "10px",
+          }}
+        >
           <div
             style={{
-              width: 32, height: 32, borderRadius: "50%",
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
               background: "rgba(14,165,233,.25)",
               border: "1px solid rgba(14,165,233,.4)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "12px", fontWeight: 700,
-              color: "var(--color-primary)", flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "var(--color-primary)",
+              flexShrink: 0,
             }}
           >
             {user?.username?.[0]?.toUpperCase()}
           </div>
           <div style={{ overflow: "hidden" }}>
-            <p style={{ color: "#fff", fontSize: "12px", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <p
+              style={{
+                color: "#fff",
+                fontSize: "12px",
+                fontWeight: 600,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
               {user?.username}
             </p>
-            <p style={{ color: "var(--color-sidebar-txt)", fontSize: "11px", textTransform: "capitalize" }}>
+            <p
+              style={{
+                color: "var(--color-sidebar-txt)",
+                fontSize: "11px",
+                textTransform: "capitalize",
+              }}
+            >
               {user?.role}
             </p>
           </div>
@@ -325,10 +372,19 @@ export function Sidebar() {
         <button
           onClick={handleLogout}
           style={{
-            width: "100%", display: "flex", alignItems: "center", gap: "8px",
-            padding: "7px 10px", background: "rgba(239,68,68,.1)", border: "none",
-            borderRadius: "var(--radius-sm)", cursor: "pointer",
-            color: "#f87171", fontSize: "12px", fontFamily: "var(--font-ui)", fontWeight: 600,
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            padding: "7px 10px",
+            background: "rgba(239,68,68,.1)",
+            border: "none",
+            borderRadius: "var(--radius-sm)",
+            cursor: "pointer",
+            color: "#f87171",
+            fontSize: "12px",
+            fontFamily: "var(--font-ui)",
+            fontWeight: 600,
           }}
         >
           <LogOut size={14} /> Sign Out
