@@ -9,19 +9,18 @@ import {
   LogOut,
   ChevronDown,
   ChevronRight,
-  AlertCircle,
-  Globe,
-  Bell,
+  BarChart2,
+  Trophy,
+  ClipboardList,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import type { UserRole } from "@/types";
 
 interface NavItem {
   label: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   to?: string;
   badge?: string;
-  /* children?: { label: string; to: string; badge?: string; roles?: UserRole[] }[]; */
   children?: {
     label: string;
     to: string;
@@ -48,7 +47,6 @@ const NAV_ITEMS: NavItem[] = [
     label: "Orders",
     icon: <ShoppingCart size={17} />,
     children: [
-      /* { label:'All Orders',       to:'/orders' }, */
       { label: "All Orders", to: "/orders", end: true },
       { label: "Place Order", to: "/orders/new" },
       { label: "Invoices", to: "/orders/invoices" },
@@ -63,11 +61,6 @@ const NAV_ITEMS: NavItem[] = [
         roles: ["admin", "manager", "clerk"],
       },
       {
-        label: "Debtor Reminders",
-        to: "/orders/reminders",
-        roles: ["admin", "manager"],
-      },
-      {
         label: "Monthly Discounts",
         to: "/orders/monthly-discounts",
         roles: ["admin", "manager"],
@@ -79,11 +72,12 @@ const NAV_ITEMS: NavItem[] = [
     icon: <Users size={17} />,
     roles: ["admin", "manager"],
     children: [
-      /* { label:'Merchant Accounts', to:'/accounts' }, */
       { label: "Merchant Accounts", to: "/accounts", end: true },
       { label: "Create Account", to: "/accounts/new" },
       { label: "User Management", to: "/accounts/users" },
       { label: "PU Applications", to: "/accounts/pu-apps", badge: "new" },
+      { label: "Leaderboard", to: "/leaderboard", end: true },
+      { label: "Scorecard", to: "/scorecard", end: true },
     ],
   },
   {
@@ -93,14 +87,22 @@ const NAV_ITEMS: NavItem[] = [
     children: [
       { label: "Turnover Report", to: "/reports/turnover", end: true },
       { label: "Merchant Summary", to: "/reports/merchant-summary", end: true },
-      {
-        label: "Merchant Detailed",
-        to: "/reports/merchant-detailed",
-        end: true,
-      },
+      { label: "Merchant Detailed", to: "/reports/merchant-detailed", end: true },
       { label: "Stock Turnover", to: "/reports/stock-turnover", end: true },
       { label: "Invoice Reports", to: "/reports/invoices", end: true },
+      {
+        label: "Debtor Reminders",
+        to: "/reports/reminders",
+        roles: ["admin", "manager"],
+        end: true,
+      },
     ],
+  },
+  {
+    label: "Analytics",
+    icon: <BarChart2 size={17} />,
+    roles: ["admin", "manager"],
+    to: "/analytics",
   },
 ];
 
@@ -149,7 +151,6 @@ function NavGroup({ item }: { item: NavItem }) {
       {open && visibleChildren.length > 0 && (
         <div style={{ paddingLeft: "34px", paddingBottom: "4px" }}>
           {visibleChildren.map((child) => (
-            /*<NavLink key={child.to} to={child.to}*/
             <NavLink
               key={child.to}
               to={child.to}
@@ -204,6 +205,7 @@ export function Sidebar() {
     logout();
     navigate("/login");
   };
+
   const visibleItems = NAV_ITEMS.filter(
     (item) => !item.roles || hasRole(...item.roles),
   );
