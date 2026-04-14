@@ -31,14 +31,14 @@ export function ScorecardPage() {
 
   const scorecards = useMemo(() => {
     return merchants.map((m) => {
-      const mInvoices = invoices.filter((inv) => inv.accountId === m.id);
-      const mOrders   = orders.filter((o) => o.accountId === m.id);
+      const mInvoices = invoices.filter((inv) => inv.merchantId === m.id);
+      const mOrders   = orders.filter((o) => o.merchantId === m.id);
 
-      const totalInvoiced = mInvoices.reduce((s, i) => s + (i.totalAmount ?? 0), 0);
-      const totalPaid     = mInvoices.reduce((s, i) => s + (i.amountPaid ?? 0), 0);
+      const totalInvoiced = mInvoices.length;
+      const totalPaid     = mInvoices.filter((i) => i.paymentStatus === 'received').length;
       const paymentScore  = totalInvoiced > 0 ? (totalPaid / totalInvoiced) * 100 : 0;
 
-      const delivered  = mOrders.filter((o) => o.status === 'DELIVERED').length;
+      const delivered  = mOrders.filter((o) => o.status === 'delivered').length;
       const totalOrders = mOrders.length;
       const fulfilmentScore = totalOrders > 0 ? (delivered / totalOrders) * 100 : 0;
 
@@ -90,7 +90,7 @@ export function ScorecardPage() {
               <div style={{ display: 'flex', gap: '12px' }}>
                 <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{m.totalOrders} orders</span>
                 <span style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>
-                  £{m.totalPaid.toLocaleString('en-GB', { minimumFractionDigits: 2 })} paid of £{m.totalInvoiced.toLocaleString('en-GB', { minimumFractionDigits: 2 })}
+                  {m.totalPaid}/{m.totalInvoiced} invoices paid
                 </span>
               </div>
             </div>

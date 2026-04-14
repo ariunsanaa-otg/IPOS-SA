@@ -25,7 +25,7 @@ export function AnalyticsPage() {
   const { merchants, orders, invoices } = useAppData();
 
   const totalRevenue = invoices.reduce((s, i) => s + (i.totalAmount ?? 0), 0);
-  const totalPaid    = invoices.reduce((s, i) => s + (i.amountPaid ?? 0), 0);
+  const totalPaid    = invoices.filter((i) => i.paymentStatus === 'received').reduce((s, i) => s + (i.totalAmount ?? 0), 0);
   const outstanding  = totalRevenue - totalPaid;
 
   // Orders by status
@@ -40,7 +40,7 @@ export function AnalyticsPage() {
     return merchants
       .map((m) => ({
         name: (m.companyName ?? m.contactName ?? '').slice(0, 18),
-        revenue: invoices.filter((i) => i.accountId === m.id).reduce((s, i) => s + (i.totalAmount ?? 0), 0),
+        revenue: invoices.filter((i) => i.merchantId === m.id).reduce((s, i) => s + (i.totalAmount ?? 0), 0),
       }))
       .sort((a, b) => b.revenue - a.revenue)
       .slice(0, 8);
@@ -58,7 +58,7 @@ export function AnalyticsPage() {
     return merchants
       .map((m) => ({
         name: (m.companyName ?? m.contactName ?? '').slice(0, 18),
-        orders: orders.filter((o) => o.accountId === m.id).length,
+        orders: orders.filter((o) => o.merchantId === m.id).length,
       }))
       .sort((a, b) => b.orders - a.orders)
       .slice(0, 8);
@@ -140,7 +140,7 @@ export function AnalyticsPage() {
             <PieChart>
               <Pie data={accountStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={({ name, value }) => `${name}: ${value}`}>
                 {accountStatusData.map((entry, i) => (
-                  <Cell key={i} fill={entry.name === 'NORMAL' ? '#10b981' : entry.name === 'SUSPENDED' ? '#ef4444' : '#f59e0b'} />
+                  <Cell key={i} fill={entry.name === 'normal' ? '#10b981' : entry.name === 'suspended' ? '#ef4444' : '#f59e0b'} />
                 ))}
               </Pie>
               <Tooltip />

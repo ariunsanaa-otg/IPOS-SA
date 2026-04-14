@@ -8,9 +8,9 @@ export function LeaderboardPage() {
   const ranked = useMemo(() => {
     return merchants
       .map((m) => {
-        const merchantOrders = orders.filter((o) => o.accountId === m.id);
+        const merchantOrders = orders.filter((o) => o.merchantId === m.id);
         const totalSpend = invoices
-          .filter((inv) => inv.accountId === m.id)
+          .filter((inv) => inv.merchantId === m.id)
           .reduce((sum, inv) => sum + (inv.totalAmount ?? 0), 0);
         const orderCount = merchantOrders.length;
         return { ...m, totalSpend, orderCount };
@@ -85,13 +85,13 @@ export function LeaderboardPage() {
                 </td>
                 <td style={td}>
                   <p style={{ fontWeight: 600, fontSize: '14px' }}>{m.companyName ?? m.contactName}</p>
-                  <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{m.username}</p>
+                  <p style={{ fontSize: '12px', color: 'var(--color-text-muted)' }}>{m.iposAccount}</p>
                 </td>
                 <td style={td}>
                   <span style={{
                     fontSize: '11px', fontWeight: 600, padding: '2px 8px', borderRadius: '99px', textTransform: 'uppercase',
-                    background: m.accountStatus === 'NORMAL' ? '#d1fae5' : m.accountStatus === 'SUSPENDED' ? '#fee2e2' : '#fef3c7',
-                    color: m.accountStatus === 'NORMAL' ? '#065f46' : m.accountStatus === 'SUSPENDED' ? '#991b1b' : '#92400e',
+                    background: m.accountStatus === 'normal' ? '#d1fae5' : m.accountStatus === 'suspended' ? '#fee2e2' : '#fef3c7',
+                    color: m.accountStatus === 'normal' ? '#065f46' : m.accountStatus === 'suspended' ? '#991b1b' : '#92400e',
                   }}>
                     {m.accountStatus}
                   </span>
