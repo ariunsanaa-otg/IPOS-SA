@@ -741,7 +741,7 @@ export function AccountManagementPage() {
                         : `Fixed ${(liveView.discountPlan.rate * 100).toFixed(0)}%`
                       : "Flexible (tiered)",
                 },
-                { label: "Member Since", value: liveView.createdAt },
+                // { label: "Member Since", value: liveView.createdAt },
               ].map(({ label, value }) => (
                 <div
                   key={label}
