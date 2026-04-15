@@ -57,6 +57,7 @@ export interface Merchant {
   paymentDueDays: number;
   paymentOverdueDays?: number;
   loginUsername?: string;
+  loginPassword?: string;
 }
 
 // ── Catalogue ─────────────────────────────────
