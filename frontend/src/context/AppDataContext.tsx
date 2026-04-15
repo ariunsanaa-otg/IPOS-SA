@@ -329,7 +329,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       // 1. Create discount plan
       const planId = await syncDiscountPlan(m.discountPlan);
 
-      // 2. Create account
+      // 2. Create account (include credit limit from form so it is persisted on initial insert)
       const created = await accountsApi.create({
         username:
           m.loginUsername ?? m.companyName.toLowerCase().replace(/\s+/g, ""),
@@ -342,13 +342,11 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
         phone: m.phone,
         fax: m.fax,
         email: m.email,
+        creditLimit: m.creditLimit,
       });
 
-      // 3. Assign credit limit and discount plan in parallel
-      await Promise.all([
-        accountsApi.updateCreditLimit(created.accountId, m.creditLimit),
-        accountsApi.assignDiscountPlan(created.accountId, planId),
-      ]);
+      // 3. Assign discount plan
+      await accountsApi.assignDiscountPlan(created.accountId, planId);
 
       await loadAccounts();
     },
