@@ -360,6 +360,9 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
       const backendId = parseInt(id, 10);
 
       // Update contact info if any contact fields changed
+      const hasNewPassword =
+        typeof updates.loginPassword === "string" &&
+        updates.loginPassword.length > 0;
       const hasContact = [
         "contactName",
         "companyName",
@@ -369,8 +372,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
         "phone",
         "fax",
         "email",
-        "password",
-      ].some((k) => k in updates);
+      ].some((k) => k in updates) || hasNewPassword;
       if (hasContact) {
         await accountsApi.updateContact(backendId, {
           contactName: updates.contactName,
@@ -381,7 +383,9 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
           phone: updates.phone,
           fax: updates.fax,
           email: updates.email,
-          password: updates.loginPassword,
+          // only include password if user actually entered a new one,
+          // otherwise an empty string overwrites the stored password
+          password: hasNewPassword ? updates.loginPassword : undefined,
         });
       }
 
