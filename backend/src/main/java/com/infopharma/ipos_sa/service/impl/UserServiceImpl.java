@@ -13,25 +13,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserAccountRepository userAccountRepository;
     private final DiscountPlanRepository discountPlanRepository;
-    private final OrderRepository orderRepository;
-    private final InvoiceRepository invoiceRepository;
-    private final PaymentRepository paymentRepository;
 
     public UserServiceImpl(UserAccountRepository userAccountRepository,
-                           DiscountPlanRepository discountPlanRepository,
-                           OrderRepository orderRepository,
-                           InvoiceRepository invoiceRepository,
-                           PaymentRepository paymentRepository) {
+                           DiscountPlanRepository discountPlanRepository) {
         this.userAccountRepository = userAccountRepository;
         this.discountPlanRepository = discountPlanRepository;
-        this.orderRepository = orderRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.paymentRepository = paymentRepository;
     }
 
     @Override
@@ -45,20 +37,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void deleteAccount(Long id) {
-        UserAccount account = userAccountRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Account not found: " + id));
-        // Cascade: payments → invoices → orders → account
-        List<Payment> payments = paymentRepository.findByAccount(account);
-        paymentRepository.deleteAll(payments);
-
-        List<Invoice> invoices = invoiceRepository.findByAccount(account);
-        invoiceRepository.deleteAll(invoices);
-
-        List<Order> orders = orderRepository.findByAccount(account);
-        orderRepository.deleteAll(orders);
-
+        if (!userAccountRepository.existsById(id))
+            throw new EntityNotFoundException("Account not found: " + id);
         userAccountRepository.deleteById(id);
     }
 

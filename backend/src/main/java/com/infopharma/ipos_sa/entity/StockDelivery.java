@@ -2,6 +2,8 @@ package com.infopharma.ipos_sa.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.*;
 import java.time.LocalDate;
 
@@ -24,6 +26,7 @@ public class StockDelivery {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CatalogueItem item;
 
     @Column(name = "quantity_received", nullable = false)
