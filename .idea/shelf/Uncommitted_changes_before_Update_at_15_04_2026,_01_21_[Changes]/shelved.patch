@@ -1,0 +1,111 @@
+Index: frontend/src/context/AuthContext.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>/**\n * AuthContext — authenticates against the Spring Boot backend.\n *\n * Spring Security is commented out in the backend, so there is no\n * POST /api/auth/login endpoint. Instead we:\n *  1. GET /api/accounts (all accounts, publicly accessible)\n *  2. Find the matching username + password in that list\n *  3. Map accountType → UserRole\n *\n * Staff accounts (ADMIN, MANAGER, etc.) are seeded in the DB.\n * Merchant accounts have accountType = MERCHANT.\n *\n * This approach is safe for demo purposes. When Spring Security\n * is enabled, swap login() for a real POST /api/auth/login call.\n */\nimport React, { createContext, useContext, useState, useCallback } from \"react\";\nimport type { User, UserRole } from \"@/types\";\nimport { api } from \"@/api/client\";\nimport type { ApiUserAccount } from \"@/api/types\";\n\ninterface AuthContextValue {\n  user: User | null;\n  isAuthenticated: boolean;\n  login: (\n    username: string,\n    password: string,\n  ) => Promise<{ success: boolean; error?: string }>;\n  logout: () => void;\n  hasRole: (...roles: UserRole[]) => boolean;\n}\n\nconst AuthContext = createContext<AuthContextValue | null>(null);\n\n// Map backend AccountType → frontend UserRole\nconst ACCOUNT_TYPE_TO_ROLE: Record<string, UserRole> = {\n  ADMIN: \"admin\",\n  MANAGER: \"manager\",\n  MERCHANT: \"merchant\",\n  // Staff roles not in the backend enum — keep local fallback\n};\n\n// Local staff fallback (no backend rows for warehouse/clerk/delivery)\n// These are used ONLY if the backend doesn't have those accounts yet.\nconst LOCAL_STAFF: (User & { password: string })[] = [\n    //remove after local test!!!\n  { id: \"local-0\", username: \"Sysdba\", password: \"London_weighting\", role: \"admin\" },\n  {\n    id: \"local-3\",\n    username: \"accountant\",\n    password: \"Count_money\",\n    role: \"manager\",\n  },\n  { id: \"local-4\", username: \"clerk\", password: \"Paperwork\", role: \"clerk\" },\n  {\n    id: \"local-5\",\n    username: \"warehouse1\",\n    password: \"Get_a_beer\",\n    role: \"warehouse\",\n  },\n  {\n    id: \"local-6\",\n    username: \"warehouse2\",\n    password: \"Lot_smell\",\n    role: \"warehouse\",\n  },\n  {\n    id: \"local-7\",\n    username: \"delivery\",\n    password: \"Too_dark\",\n    role: \"delivery\",\n  },\n];\n\nexport function AuthProvider({ children }: { children: React.ReactNode }) {\n  const [user, setUser] = useState<User | null>(() => {\n    const stored = sessionStorage.getItem(\"ipos_user\");\n    return stored ? (JSON.parse(stored) as User) : null;\n  });\n\n  const login = useCallback(async (username: string, password: string) => {\n    // 1. Try local staff fallback first (warehouse, clerk, delivery — not in DB)\n    const localMatch = LOCAL_STAFF.find(\n      (u) => u.username === username && u.password === password,\n    );\n    if (localMatch) {\n      const { password: _pw, ...safeUser } = localMatch;\n      void _pw;\n      setUser(safeUser);\n      sessionStorage.setItem(\"ipos_user\", JSON.stringify(safeUser));\n      return { success: true };\n    }\n\n    // 1. Fetch accounts from backend and find a matching user\n    try {\n      const accounts = await api.get<ApiUserAccount[]>(\"/accounts\");\n      const match = accounts.find(\n        (a) => a.username === username && a.password === password,\n      );\n\n      if (!match)\n        return { success: false, error: \"Invalid username or password.\" };\n\n      const role: UserRole = ACCOUNT_TYPE_TO_ROLE[match.accountType] ?? \"clerk\";\n      const safeUser: User = {\n        id: String(match.accountId),\n        username: match.username,\n        role,\n        // For merchants, merchantId = their ACC string (e.g. ACC0001)\n        merchantId:\n          role === \"merchant\"\n            ? `ACC${String(match.accountId).padStart(4, \"0\")}`\n            : undefined,\n      };\n\n      setUser(safeUser);\n      sessionStorage.setItem(\"ipos_user\", JSON.stringify(safeUser));\n      return { success: true };\n    } catch {\n      // Backend is offline — fall back to demo credentials so dev can still work\n      return {\n        success: false,\n        error:\n          \"Cannot connect to backend. Is the Spring Boot server running on port 8080?\",\n      };\n    }\n  }, []);\n\n  const logout = useCallback(() => {\n    setUser(null);\n    sessionStorage.removeItem(\"ipos_user\");\n  }, []);\n\n  const hasRole = useCallback(\n    (...roles: UserRole[]) => !!user && roles.includes(user.role),\n    [user],\n  );\n\n  return (\n    <AuthContext.Provider\n      value={{ user, isAuthenticated: !!user, login, logout, hasRole }}\n    >\n      {children}\n    </AuthContext.Provider>\n  );\n}\n\nexport function useAuth(): AuthContextValue {\n  const ctx = useContext(AuthContext);\n  if (!ctx) throw new Error(\"useAuth must be used within AuthProvider\");\n  return ctx;\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/frontend/src/context/AuthContext.tsx b/frontend/src/context/AuthContext.tsx
+--- a/frontend/src/context/AuthContext.tsx	(revision 82c85c14f97a556ccde0f4824bff5c0cd692e835)
++++ b/frontend/src/context/AuthContext.tsx	(date 1776118157688)
+@@ -42,8 +42,8 @@
+ // Local staff fallback (no backend rows for warehouse/clerk/delivery)
+ // These are used ONLY if the backend doesn't have those accounts yet.
+ const LOCAL_STAFF: (User & { password: string })[] = [
+-    //remove after local test!!!
+   { id: "local-0", username: "Sysdba", password: "London_weighting", role: "admin" },
++  //^ remove after local test!!!
+   {
+     id: "local-3",
+     username: "accountant",
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"918820a7-de2a-4a12-b7b9-ebbcdd6c4057\" name=\"Changes\" comment=\"\" />\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Class\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\n      <map>\n        <entry key=\"$PROJECT_DIR$\" value=\"feature/accounts-auth\" />\n      </map>\n    </option>\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\n  </component>\n  <component name=\"GitHubPullRequestSearchHistory\">{\n  &quot;lastFilter&quot;: {\n    &quot;state&quot;: &quot;OPEN&quot;,\n    &quot;assignee&quot;: &quot;Neilx21&quot;\n  }\n}</component>\n  <component name=\"GithubPullRequestsUISettings\">{\n  &quot;selectedUrlAndAccountId&quot;: {\n    &quot;url&quot;: &quot;https://github.com/Neil-21/IPOS-SA.git&quot;,\n    &quot;accountId&quot;: &quot;aed11ef5-40f4-4f03-b15e-e2e4d993cb29&quot;\n  }\n}</component>\n  <component name=\"KubernetesApiPersistence\">{}</component>\n  <component name=\"KubernetesApiProvider\">{\n  &quot;isMigrated&quot;: true\n}</component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 4\n}</component>\n  <component name=\"ProjectId\" id=\"3Af1bkLCxPniDiQmrKFHVzdsTvG\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"ModuleVcsDetector.initialDetectionPerformed\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"RunOnceActivity.git.unshallow\": \"true\",\n    \"RunOnceActivity.typescript.service.memoryLimit.init\": \"true\",\n    \"git-widget-placeholder\": \"A\",\n    \"kotlin-language-version-configured\": \"true\",\n    \"last_opened_file_path\": \"/Users/sanaa/Documents/IPOS-SA\",\n    \"node.js.detected.package.eslint\": \"true\",\n    \"node.js.detected.package.tslint\": \"true\",\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\n    \"nodejs_package_manager_path\": \"npm\",\n    \"project.structure.last.edited\": \"Project\",\n    \"project.structure.proportion\": \"0.15\",\n    \"project.structure.side.proportion\": \"0.2\",\n    \"ts.external.directory.path\": \"/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external\",\n    \"vue.rearranger.settings.migration\": \"true\"\n  }\n}]]></component>\n  <component name=\"RunManager\">\n    <configuration default=\"true\" type=\"JetRunConfigurationType\">\n      <module name=\"IPOS-SA\" />\n      <method v=\"2\">\n        <option name=\"Make\" enabled=\"true\" />\n      </method>\n    </configuration>\n    <configuration default=\"true\" type=\"KotlinStandaloneScriptRunConfigurationType\">\n      <module name=\"IPOS-SA\" />\n      <option name=\"filePath\" />\n      <method v=\"2\" />\n    </configuration>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-jdk-30f59d01ecdd-26cb7f24e5b0-intellij.indexing.shared.core-IU-253.29346.240\" />\n        <option value=\"bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.29346.240\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"918820a7-de2a-4a12-b7b9-ebbcdd6c4057\" name=\"Changes\" comment=\"\" />\n      <created>1772968884263</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1772968884263</updated>\n      <workItem from=\"1772968885370\" duration=\"214000\" />\n      <workItem from=\"1772970286882\" duration=\"247000\" />\n      <workItem from=\"1772970541745\" duration=\"848000\" />\n      <workItem from=\"1775496314662\" duration=\"15054000\" />\n    </task>\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 82c85c14f97a556ccde0f4824bff5c0cd692e835)
++++ b/.idea/workspace.xml	(date 1776212296293)
+@@ -4,7 +4,10 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="918820a7-de2a-4a12-b7b9-ebbcdd6c4057" name="Changes" comment="" />
++    <list default="true" id="918820a7-de2a-4a12-b7b9-ebbcdd6c4057" name="Changes" comment="">
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/frontend/src/context/AuthContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/context/AuthContext.tsx" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -20,7 +23,7 @@
+   <component name="Git.Settings">
+     <option name="RECENT_BRANCH_BY_REPOSITORY">
+       <map>
+-        <entry key="$PROJECT_DIR$" value="feature/accounts-auth" />
++        <entry key="$PROJECT_DIR$" value="A" />
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+@@ -49,27 +52,28 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "ModuleVcsDetector.initialDetectionPerformed": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "RunOnceActivity.git.unshallow": "true",
+-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+-    "git-widget-placeholder": "A",
+-    "kotlin-language-version-configured": "true",
+-    "last_opened_file_path": "/Users/sanaa/Documents/IPOS-SA",
+-    "node.js.detected.package.eslint": "true",
+-    "node.js.detected.package.tslint": "true",
+-    "node.js.selected.package.eslint": "(autodetect)",
+-    "node.js.selected.package.tslint": "(autodetect)",
+-    "nodejs_package_manager_path": "npm",
+-    "project.structure.last.edited": "Project",
+-    "project.structure.proportion": "0.15",
+-    "project.structure.side.proportion": "0.2",
+-    "ts.external.directory.path": "/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
+-    "vue.rearranger.settings.migration": "true"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;b&quot;,
++    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
++    &quot;last_opened_file_path&quot;: &quot;/Users/sanaa/Documents/IPOS-SA&quot;,
++    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
++    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
++    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
++    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
++    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
++    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
++    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
++    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
++    &quot;ts.external.directory.path&quot;: &quot;/Applications/IntelliJ IDEA.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external&quot;,
++    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RunManager">
+     <configuration default="true" type="JetRunConfigurationType">
+       <module name="IPOS-SA" />
+@@ -102,7 +106,9 @@
+       <workItem from="1772968885370" duration="214000" />
+       <workItem from="1772970286882" duration="247000" />
+       <workItem from="1772970541745" duration="848000" />
+-      <workItem from="1775496314662" duration="15054000" />
++      <workItem from="1775496314662" duration="18177000" />
++      <workItem from="1775823022929" duration="5882000" />
++      <workItem from="1776090933449" duration="6891000" />
+     </task>
+     <servers />
+   </component>
