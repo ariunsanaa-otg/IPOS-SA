@@ -162,6 +162,7 @@ export function AccountManagementPage() {
     "bank_transfer" | "card" | "cheque"
   >("bank_transfer");
   const [payRef, setPayRef] = useState("");
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData, string>>>({});
 
   // Always get live merchant from context
   const liveView = viewId
@@ -194,6 +195,7 @@ export function AccountManagementPage() {
   }, [location.pathname]);
 
   const closeModal = () => {
+    setFormErrors({});
     setModalOpen(false);
     if (location.pathname === "/accounts/new") {
       navigate("/accounts");
@@ -207,7 +209,17 @@ export function AccountManagementPage() {
   };
 
   const handleSave = async () => {
-    if (!form.companyName.trim() || !form.email.trim()) return;
+    /*if (!form.companyName.trim() || !form.email.trim()) return;*/
+    const errors: Partial<Record<keyof FormData, string>> = {};
+    if (!form.companyName.trim()) errors.companyName = 'Company name is required.';
+    if (!form.email.trim())       errors.email = 'Email is required.';
+    if (!form.contactName.trim()) errors.contactName = 'Contact name is required.';
+    if (!editMerchant && !form.loginPassword.trim()) errors.loginPassword = 'Password is required.';
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+    setFormErrors({});
     const plan = formToDiscountPlan(form);
     const nextAcct = `ACC${String(merchants.length + 4).padStart(4, "0")}`;
     try {
@@ -1010,19 +1022,19 @@ export function AccountManagementPage() {
                 gap: "12px",
               }}
             >
-              <Field label="Company Name" required>
+              <Field label="Company Name" required error={formErrors.companyName}>
                 <Input
                   value={form.companyName}
                   onChange={(e) => f("companyName", e.target.value)}
                 />
               </Field>
-              <Field label="Contact Name" required>
+              <Field label="Contact Name" required error={formErrors.contactName}>
                 <Input
                   value={form.contactName}
                   onChange={(e) => f("contactName", e.target.value)}
                 />
               </Field>
-              <Field label="Email" required>
+              <Field label="Email" required error={formErrors.email}>
                 <Input
                   type="email"
                   value={form.email}
@@ -1087,13 +1099,13 @@ export function AccountManagementPage() {
                   onChange={(e) => f("loginUsername", e.target.value)}
                 />
               </Field>
-              <Field
-                label={
+              <Field label={
                   editMerchant
                     ? "New Password (blank = keep current)"
                     : "Password"
                 }
                 required={!editMerchant}
+                     error={formErrors.loginPassword}
               >
                 <Input
                   type="password"

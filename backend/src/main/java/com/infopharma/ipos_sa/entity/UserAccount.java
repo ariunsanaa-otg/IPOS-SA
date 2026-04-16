@@ -73,6 +73,9 @@ public class UserAccount {
     @Column(name = "payment_due_date")
     private LocalDate paymentDueDate;
 
+    @Column(name = "role", length = 50)
+    private String role;
+
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<MonthlyDiscount> monthlyDiscounts;

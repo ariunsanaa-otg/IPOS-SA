@@ -34,4 +34,4 @@ Thumbs.db
 # Optional: Cache
 .cache/
 .next/
-.nuxt/
+.nuxt/.idea/
