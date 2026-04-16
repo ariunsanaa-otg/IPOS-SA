@@ -2,6 +2,8 @@ package com.infopharma.ipos_sa.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -24,12 +26,14 @@ public class Invoice {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", nullable = false)
     @JsonIgnoreProperties({"account", "hibernateLazyInitializer", "handler"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Order order;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", nullable = false)
     @JsonIgnoreProperties({"discountPlan", "monthlyDiscounts", "password",
                            "hibernateLazyInitializer", "handler"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserAccount account;
 
     @Column(name = "invoice_date", nullable = false)

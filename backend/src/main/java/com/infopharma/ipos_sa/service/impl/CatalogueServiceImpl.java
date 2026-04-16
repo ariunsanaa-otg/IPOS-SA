@@ -6,6 +6,7 @@ import com.infopharma.ipos_sa.entity.CatalogueItem;
 import com.infopharma.ipos_sa.entity.StockDelivery;
 import com.infopharma.ipos_sa.mapper.Mapper;
 import com.infopharma.ipos_sa.repository.CatalogueItemRepository;
+import com.infopharma.ipos_sa.repository.OrderItemRepository;
 import com.infopharma.ipos_sa.repository.StockDeliveryRepository;
 import com.infopharma.ipos_sa.service.CatalogueService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,15 +24,18 @@ public class CatalogueServiceImpl implements CatalogueService {
 
     private final CatalogueItemRepository catalogueItemRepository;
     private final StockDeliveryRepository stockDeliveryRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ModelMapper modelMapper;                              // used only for in-place partial update
     private final Mapper<StockDelivery, StockAddRequest> stockDeliveryMapper;
 
     public CatalogueServiceImpl(CatalogueItemRepository catalogueItemRepository,
                                 StockDeliveryRepository stockDeliveryRepository,
+                                OrderItemRepository orderItemRepository,
                                 ModelMapper modelMapper,
                                 Mapper<StockDelivery, StockAddRequest> stockDeliveryMapper) {
         this.catalogueItemRepository = catalogueItemRepository;
         this.stockDeliveryRepository = stockDeliveryRepository;
+        this.orderItemRepository = orderItemRepository;
         this.modelMapper = modelMapper;
         this.stockDeliveryMapper = stockDeliveryMapper;
     }
@@ -59,10 +63,12 @@ public class CatalogueServiceImpl implements CatalogueService {
     }
 
     @Override
+    @Transactional
     public void delete(String itemId) {
-        if (!catalogueItemRepository.existsById(itemId)) {
+        if (!catalogueItemRepository.existsById(itemId))
             throw new EntityNotFoundException("Item not found: " + itemId);
-        }
+        orderItemRepository.deleteByItemId(itemId);
+        stockDeliveryRepository.deleteByItemId(itemId);
         catalogueItemRepository.deleteById(itemId);
     }
 

@@ -7,7 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -26,4 +25,5 @@ public class CreateUserAccountRequest {
     private String phone;
     private String fax;
     private String email;
+    private BigDecimal creditLimit;
 }

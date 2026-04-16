@@ -2,6 +2,8 @@ package com.infopharma.ipos_sa.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -27,6 +29,7 @@ public class Order {
     @JoinColumn(name = "account_id", nullable = false)
     @JsonIgnoreProperties({"discountPlan", "monthlyDiscounts", "password",
                            "hibernateLazyInitializer", "handler"})
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserAccount account;
 
     @Column(name = "order_date", nullable = false)
