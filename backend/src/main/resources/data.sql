@@ -43,6 +43,17 @@ BEGIN
     -- ── Staff accounts ───────────────────────────────────────
 
     INSERT INTO user_accounts (username, password, account_type, account_status, is_active, phone, email, balance)
+    /*
+    INSERT INTO user_accounts (username, password, account_type, account_status, is_active, phone, email, balance, role) */
+    /*VALUES
+        ('Sysdba',     'London_weighting', 'ADMIN',   'NORMAL', true, '000', 'admin@infopharma.co.uk',   0.00, 'admin'),
+        ('manager',    'Get_it_done',      'MANAGER', 'NORMAL', true, '000', 'manager@infopharma.co.uk', 0.00, 'manager'),
+        ('accountant', 'Count_money',      'MANAGER', 'NORMAL', true, '000', 'acct@infopharma.co.uk',    0.00, 'accountant'),
+        ('clerk',      'Paperwork',        'MANAGER', 'NORMAL', true, '000', 'clerk@infopharma.co.uk',   0.00, 'clerk'),
+        ('warehouse1', 'Get_a_beer',       'MANAGER', 'NORMAL', true, '000', 'wh1@infopharma.co.uk',     0.00, 'warehouse'),
+        ('warehouse2', 'Lot_smell',        'MANAGER', 'NORMAL', true, '000', 'wh2@infopharma.co.uk',     0.00, 'warehouse'),
+        ('delivery',   'Too_dark',         'MANAGER', 'NORMAL', true, '000', 'del@infopharma.co.uk',     0.00, 'delivery');*/
+
     VALUES
       ('Sysdba',     'London_weighting', 'ADMIN',   'NORMAL', true, '000', 'admin@infopharma.co.uk',   0.00),
       ('manager',    'Get_it_done',      'MANAGER', 'NORMAL', true, '000', 'manager@infopharma.co.uk', 0.00),
