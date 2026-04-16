@@ -37,6 +37,16 @@ const TYPE_LABEL: Record<string, string> = {
   MANAGER: 'Manager / Staff',
 };
 
+const USERNAME_ROLE_LABEL: Record<string, string> = {
+  Sysdba:     'Administrator',
+  manager:    'Director of Operations',
+  accountant: 'Senior Accountant',
+  clerk:      'Accountant',
+  warehouse1: 'Warehouse Employee',
+  warehouse2: 'Warehouse Employee',
+  delivery:   'Delivery Department Employee',
+};
+
 type FormData = { username: string; password: string; role: DisplayRole; email: string; phone: string };
 const EMPTY_FORM: FormData = { username: '', password: '', role: 'manager', email: '', phone: '000' };
 
@@ -139,7 +149,8 @@ export function UserManagementPage() {
           color: ROLE_COLORS[r.accountType] ?? 'var(--color-primary)',
         }}>
           <Shield size={10} />
-          {TYPE_LABEL[r.accountType] ?? r.accountType}
+          {/*{TYPE_LABEL[r.accountType] ?? r.accountType}*/}
+          {USERNAME_ROLE_LABEL[r.username] ?? TYPE_LABEL[r.accountType] ?? r.accountType}
         </span>
       ) },
     { key: 'email', header: 'Email',
